@@ -7,6 +7,22 @@ type UserData = {
 };
 
 class CustomGenetic extends Genetic.Genetic<Entity, UserData> {
+  optimize: Genetic.Optimize.OptimizeFun;
+  protected seed(): string {
+    throw new Error("Method not implemented.");
+  }
+  protected mutate(entity: string): string {
+    throw new Error("Method not implemented.");
+  }
+  protected crossover(mother: string, father: string): [string, string] {
+    throw new Error("Method not implemented.");
+  }
+  protected fitness(entity: string): number | Promise<number> {
+    throw new Error("Method not implemented.");
+  }
+  protected shouldContinue(state: Genetic.GeneticState<string>): boolean {
+    throw new Error("Method not implemented.");
+  }
   // more likely allows the most fit individuals to survive between generations
   public select1 = Genetic.Select1.RandomLinearRank;
   // always mates the most fit individual with random individuals
