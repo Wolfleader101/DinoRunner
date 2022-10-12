@@ -529,7 +529,6 @@ Runner.prototype = {
     this.outerContainerEl.appendChild(this.containerEl);
     this.outerContainerEl.appendChild(this.slowSpeedCheckboxLabel);
 
-    this.startListening();
     this.update();
 
     window.addEventListener(
@@ -777,7 +776,7 @@ Runner.prototype = {
       this.runningTime += deltaTime;
       const hasObstacles = this.runningTime > this.config.CLEAR_TIME;
 
-      // First jump triggers the intro.
+      // First jump triggers the intro
       if (this.tRex.jumpCount === 1 && !this.playingIntro) {
         this.playIntro();
       }
@@ -920,15 +919,15 @@ Runner.prototype = {
    * @param {Event} e
    */
   handleCanvasKeyPress(e) {
-    if (!this.activated && !Runner.audioCues) {
-      this.toggleSpeed();
-      Runner.audioCues = true;
-      this.generatedSoundFx.init();
-      Runner.generatedSoundFx = this.generatedSoundFx;
-      Runner.config.CLEAR_TIME *= 1.2;
-    } else if (e.keyCode && Runner.keycodes.JUMP[e.keyCode]) {
-      this.onKeyDown(e);
-    }
+    // if (!this.activated && !Runner.audioCues) {
+    //   this.toggleSpeed();
+    //   Runner.audioCues = true;
+    //   this.generatedSoundFx.init();
+    //   Runner.generatedSoundFx = this.generatedSoundFx;
+    //   Runner.config.CLEAR_TIME *= 1.2;
+    // } else if (e.keyCode && Runner.keycodes.JUMP[e.keyCode]) {
+    //   this.onKeyDown(e);
+    // }
   },
 
   /**
@@ -989,66 +988,6 @@ Runner.prototype = {
       this.slowSpeedCheckbox.setAttribute("disabled", "disabled");
     } else {
       this.slowSpeedCheckbox.removeAttribute("disabled");
-    }
-  },
-
-  /**
-   * Bind relevant key / mouse / touch listeners.
-   */
-  startListening() {
-    // A11y keyboard / screen reader activation.
-    this.containerEl.addEventListener(
-      Runner.events.KEYDOWN,
-      this.handleCanvasKeyPress.bind(this)
-    );
-    if (!IS_MOBILE) {
-      this.containerEl.addEventListener(
-        Runner.events.FOCUS,
-        this.showSpeedToggle.bind(this)
-      );
-    }
-    this.canvas.addEventListener(
-      Runner.events.KEYDOWN,
-      this.preventScrolling.bind(this)
-    );
-    this.canvas.addEventListener(
-      Runner.events.KEYUP,
-      this.preventScrolling.bind(this)
-    );
-
-    // Keys.
-    document.addEventListener(Runner.events.KEYDOWN, this);
-    document.addEventListener(Runner.events.KEYUP, this);
-
-    // Touch / pointer.
-    this.containerEl.addEventListener(Runner.events.TOUCHSTART, this);
-    document.addEventListener(Runner.events.POINTERDOWN, this);
-    document.addEventListener(Runner.events.POINTERUP, this);
-
-    if (this.isArcadeMode()) {
-      // Gamepad
-      window.addEventListener(Runner.events.GAMEPADCONNECTED, this);
-    }
-  },
-
-  /**
-   * Remove all listeners.
-   */
-  stopListening() {
-    document.removeEventListener(Runner.events.KEYDOWN, this);
-    document.removeEventListener(Runner.events.KEYUP, this);
-
-    if (this.touchController) {
-      this.touchController.removeEventListener(Runner.events.TOUCHSTART, this);
-      this.touchController.removeEventListener(Runner.events.TOUCHEND, this);
-    }
-
-    this.containerEl.removeEventListener(Runner.events.TOUCHSTART, this);
-    document.removeEventListener(Runner.events.POINTERDOWN, this);
-    document.removeEventListener(Runner.events.POINTERUP, this);
-
-    if (this.isArcadeMode()) {
-      window.removeEventListener(Runner.events.GAMEPADCONNECTED, this);
     }
   },
 
