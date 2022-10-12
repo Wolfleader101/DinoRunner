@@ -1,3 +1,32 @@
+var genetic = Genetic.create();
+
+genetic.optimize = Genetic.Optimize.Maximize;
+genetic.select1 = Genetic.Select1.Tournament2;
+genetic.select2 = Genetic.Select2.Tournament2;
+
+genetic.seed = function () {
+  return Math.random();
+};
+
+genetic.fitness = function (entity) {
+  let fitness = 0;
+
+  for (let i = 0; i < entity.length; ++i) {
+    // increase fitness for each character that matches
+    if (entity[i] == this.userData["solution"][i]) fitness += 1;
+
+    // award fractions of a point as we get warmer
+    fitness +=
+      (127 -
+        Math.abs(
+          entity.charCodeAt(i) - this.userData["solution"].charCodeAt(i)
+        )) /
+      50;
+  }
+
+  return fitness;
+};
+
 const shouldJump = () => {
   return true;
 };
