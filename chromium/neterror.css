@@ -29,26 +29,11 @@ a {
   -webkit-user-select: none;
   display: inline-block;
 }
-
-.icon-generic {
-  /* Can't access chrome://theme/IDR_ERROR_NETWORK_GENERIC from an untrusted
-   * renderer process, so embed the resource manually. */
-  content: -webkit-image-set(
-      url(../../resources/default_100_percent/neterror/error_network_generic.png) 1x,
-      url(../../resources/default_200_percent/neterror/error_network_generic.png) 2x);
-}
-
-.icon-offline {
-  content: -webkit-image-set(
-      url(images/default_100_percent/offline/100-error-offline.png) 1x,
-      url(images/default_200_percent/offline/200-error-offline.png) 2x);
-  position: relative;
-}
-
 .icon-disabled {
   content: -webkit-image-set(
-      url(images/default_100_percent/offline/100-disabled.png) 1x,
-      url(images/default_200_percent/offline/200-disabled.png) 2x);
+    url(images/default_100_percent/offline/100-disabled.png) 1x,
+    url(images/default_200_percent/offline/200-disabled.png) 2x
+  );
   width: 112px;
 }
 
@@ -76,7 +61,7 @@ a {
 #error-information-button {
   content: url(images/help_outline.svg);
   height: 24px;
-  vertical-align: -.15em;
+  vertical-align: -0.15em;
   width: 24px;
 }
 
@@ -94,7 +79,8 @@ a {
 }
 
 .use-popup-container#error-information-popup-container
-  #error-information-popup-content > p {
+  #error-information-popup-content
+  > p {
   margin-bottom: 11px;
   margin-inline-start: 20px;
 }
@@ -141,19 +127,8 @@ a {
   text-transform: uppercase;
 }
 
-#sub-frame-error-details {
-<if expr="is_ios">
-  font-size: 8pt;
-</if>
-  color: #8F8F8F;
-<if expr="not is_android and not is_ios">
-  /* Not done on mobile for performance reasons. */
-  text-shadow: 0 1px 0 rgba(255,255,255,0.3);
-</if>
-}
-
-[jscontent=hostName],
-[jscontent=failedUrl] {
+[jscontent="hostName"],
+[jscontent="failedUrl"] {
   overflow-wrap: break-word;
 }
 
@@ -169,7 +144,7 @@ a {
   bottom: 24px;
   box-sizing: border-box;
   color: #fff;
-  font-size: .87em;
+  font-size: 0.87em;
   left: 24px;
   max-width: 568px;
   min-width: 288px;
@@ -182,8 +157,7 @@ a {
 }
 
 .snackbar-show {
-  -webkit-animation:
-    show-snackbar 250ms cubic-bezier(0, 0, 0.2, 1) forwards,
+  -webkit-animation: show-snackbar 250ms cubic-bezier(0, 0, 0.2, 1) forwards,
     hide-snackbar 250ms cubic-bezier(0.4, 0, 1, 1) forwards 5s;
 }
 
@@ -238,7 +212,7 @@ a {
 }
 
 #download-link-clicked {
-  color: #BBB;
+  color: #bbb;
 }
 
 #download-link::before,
@@ -258,7 +232,7 @@ a {
   border: 1px solid white;
   border-radius: 8px;
   display: flex;
-  font-size: .8em;
+  font-size: 0.8em;
   justify-content: space-between;
   line-height: 1;
 }
@@ -299,7 +273,7 @@ a {
    */
   max-height: 27em;
   transition: max-height 200ms ease-in, visibility 0s 200ms,
-              opacity 200ms 200ms linear;
+    opacity 200ms 200ms linear;
 }
 
 /* Controls the animation of the offline content list when it is
@@ -309,7 +283,7 @@ a {
   max-height: 0;
   opacity: 0;
   transition: opacity 200ms linear, visibility 0s 200ms,
-              max-height 200ms 200ms ease-out;
+    max-height 200ms 200ms ease-out;
   visibility: hidden;
 }
 
@@ -321,14 +295,13 @@ a {
 /* The selectors below adjust the "overflow" of the suggestion cards contents
  * based on the same screen size based strategy used for the main frame, which
  * is applied by the `interstitial-wrapper` class. */
-@media (max-width: 420px)  {
+@media (max-width: 420px) {
   #offline-content-list {
     margin-inline-start: -2.5%;
     width: 105%;
   }
 }
-@media (max-width: 420px) and (orientation: portrait),
-       (max-height: 560px) {
+@media (max-width: 420px) and (orientation: portrait), (max-height: 560px) {
   #offline-content-list {
     margin-inline-start: -12px;
     width: calc(100% + 24px);
@@ -345,14 +318,18 @@ a {
   width: 100%;
 }
 
-.suggestion-with-image #offline-content-list:not(.is-rtl)
-.offline-content-suggestion-thumbnail > img {
+.suggestion-with-image
+  #offline-content-list:not(.is-rtl)
+  .offline-content-suggestion-thumbnail
+  > img {
   border-bottom-right-radius: 7px;
   border-top-right-radius: 7px;
 }
 
-.suggestion-with-image #offline-content-list.is-rtl
-.offline-content-suggestion-thumbnail > img {
+.suggestion-with-image
+  #offline-content-list.is-rtl
+  .offline-content-suggestion-thumbnail
+  > img {
   border-bottom-left-radius: 7px;
   border-top-left-radius: 7px;
 }
@@ -416,7 +393,7 @@ a {
   flex-direction: column;
   justify-content: space-between;
   line-height: 1.3;
-  padding: .9em;
+  padding: 0.9em;
   width: 100%;
 }
 
@@ -436,7 +413,7 @@ div.offline-content-suggestion {
   border-radius: 8px;
   display: flex;
   justify-content: space-between;
-  margin-bottom: .8em;
+  margin-bottom: 0.8em;
 }
 
 .suggestion-with-image {
@@ -463,7 +440,7 @@ div.offline-content-suggestion {
 .offline-content-suggestion-attribution-freshness {
   color: rgb(95, 99, 104);
   display: flex;
-  font-size: .8em;
+  font-size: 0.8em;
   line-height: 1.7em;
 }
 
@@ -484,11 +461,11 @@ div.offline-content-suggestion {
 }
 
 .offline-content-suggestion-freshness::before {
-  content: '-';
+  content: "-";
   display: inline-block;
   flex-shrink: 0;
-  margin-inline-end: .1em;
-  margin-inline-start: .1em;
+  margin-inline-end: 0.1em;
+  margin-inline-start: 0.1em;
 }
 
 .no-attribution .offline-content-suggestion-freshness::before {
@@ -508,7 +485,7 @@ div.offline-content-suggestion {
   content: url(images/offline_pin.svg);
   flex-shrink: 0;
   height: 1.4em;
-  margin-inline-start: .4em;
+  margin-inline-start: 0.4em;
   width: 1.4em;
 }
 
@@ -544,7 +521,7 @@ div.offline-content-suggestion {
   text-align: start;
 }
 
-html[dir='rtl'] #cancel-save-page-button {
+html[dir="rtl"] #cancel-save-page-button {
   background-position: left 27px center;
 }
 
@@ -573,7 +550,7 @@ html[subframe] body {
   -webkit-align-items: center;
   -webkit-flex-flow: column;
   -webkit-justify-content: center;
-  background-color: #DDD;
+  background-color: #ddd;
   display: -webkit-flex;
   height: 100%;
   left: 0;
@@ -585,7 +562,7 @@ html[subframe] body {
 }
 
 #sub-frame-error:hover {
-  background-color: #EEE;
+  background-color: #eee;
 }
 
 #sub-frame-error .icon-generic {
@@ -654,20 +631,6 @@ html[subframe] body {
   position: relative;
 }
 
-#download-button::before {
-  background: -webkit-image-set(
-      url(../../resources/default_100_percent/neterror/download.png) 1x,
-      url(../../resources/default_200_percent/neterror/download.png) 2x)
-    no-repeat;
-  content: '';
-  display: inline-block;
-  height: 24px;
-  margin-inline-end: 4px;
-  margin-inline-start: -4px;
-  vertical-align: middle;
-  width: 24px;
-}
-
 #download-button:disabled {
   background: rgb(180, 206, 249);
   color: rgb(255, 255, 255);
@@ -675,23 +638,20 @@ html[subframe] body {
 
 #buttons::after {
   clear: both;
-  content: '';
+  content: "";
   display: block;
   width: 100%;
 }
 
 /* Offline page */
-html[dir='rtl'] .runner-container,
-html[dir='rtl'].offline .icon-offline {
+html[dir="rtl"] .runner-container,
+html[dir="rtl"].offline .icon-offline {
   transform: scaleX(-1);
 }
 
 .offline {
   transition: filter 1.5s cubic-bezier(0.65, 0.05, 0.36, 1),
-              background-color 1.5s cubic-bezier(0.65, 0.05, 0.36, 1);
-<if expr="not is_ios">
-  will-change: filter, background-color;
-</if>
+    background-color 1.5s cubic-bezier(0.65, 0.05, 0.36, 1);
 }
 
 .offline body {
@@ -809,7 +769,7 @@ html[dir='rtl'].offline .icon-offline {
   display: none;
 }
 
-.slow-speed-option [type=checkbox] {
+.slow-speed-option [type="checkbox"] {
   opacity: 0;
   pointer-events: none;
   position: absolute;
@@ -822,11 +782,11 @@ html[dir='rtl'].offline .icon-offline {
   position: relative;
 }
 
-.slow-speed-option [type=checkbox]:disabled ~ .slow-speed-toggle {
+.slow-speed-option [type="checkbox"]:disabled ~ .slow-speed-toggle {
   cursor: default;
 }
 
-.slow-speed-option-label [type=checkbox] {
+.slow-speed-option-label [type="checkbox"] {
   opacity: 0;
   pointer-events: none;
   position: absolute;
@@ -834,14 +794,14 @@ html[dir='rtl'].offline .icon-offline {
 
 .slow-speed-option .slow-speed-toggle::before,
 .slow-speed-option .slow-speed-toggle::after {
-  content: '';
+  content: "";
   display: block;
   margin: 0 3px;
   transition: all 100ms cubic-bezier(0.4, 0, 1, 1);
 }
 
 .slow-speed-option .slow-speed-toggle::before {
-  background: rgb(189,193,198);
+  background: rgb(189, 193, 198);
   border-radius: 0.65em;
   height: 0.9em;
   width: 2em;
@@ -858,28 +818,30 @@ html[dir='rtl'].offline .icon-offline {
   width: 1.1em;
 }
 
-.slow-speed-option [type=checkbox]:focus + .slow-speed-toggle {
+.slow-speed-option [type="checkbox"]:focus + .slow-speed-toggle {
   box-shadow: 0 0 8px rgb(94, 158, 214);
   outline: 1px solid rgb(93, 157, 213);
 }
 
-.slow-speed-option [type=checkbox]:checked + .slow-speed-toggle::before {
+.slow-speed-option [type="checkbox"]:checked + .slow-speed-toggle::before {
   background: var(--google-blue-600);
   opacity: 0.5;
 }
 
-.slow-speed-option [type=checkbox]:checked + .slow-speed-toggle::after {
+.slow-speed-option [type="checkbox"]:checked + .slow-speed-toggle::after {
   background: var(--google-blue-600);
   transform: translate(calc(2em - 90%), -50%);
 }
 
-.slow-speed-option [type=checkbox]:checked:disabled +
-  .slow-speed-toggle::before {
-  background: rgb(189,193,198);
+.slow-speed-option
+  [type="checkbox"]:checked:disabled
+  + .slow-speed-toggle::before {
+  background: rgb(189, 193, 198);
 }
 
-.slow-speed-option [type=checkbox]:checked:disabled +
-  .slow-speed-toggle::after {
+.slow-speed-option
+  [type="checkbox"]:checked:disabled
+  + .slow-speed-toggle::after {
   background: var(--google-gray-50);
 }
 
@@ -920,9 +882,7 @@ html[dir='rtl'].offline .icon-offline {
   }
 }
 
-@media (min-width: 420px) and (max-width: 736px) and
-       (min-height: 240px) and (max-height: 420px) and
-       (orientation:landscape) {
+@media (min-width: 420px) and (max-width: 736px) and (min-height: 240px) and (max-height: 420px) and (orientation: landscape) {
   .interstitial-wrapper {
     margin-bottom: 100px;
   }
@@ -1041,13 +1001,14 @@ html[dir='rtl'].offline .icon-offline {
   }
 
   .slow-speed-option .slow-speed-toggle::before,
-  .slow-speed-option [type=checkbox]:checked:disabled +
-    .slow-speed-toggle::before {
-     background: rgb(189,193,198);
+  .slow-speed-option
+    [type="checkbox"]:checked:disabled
+    + .slow-speed-toggle::before {
+    background: rgb(189, 193, 198);
   }
 
-  .slow-speed-option [type=checkbox]:checked + .slow-speed-toggle::after,
-  .slow-speed-option [type=checkbox]:checked + .slow-speed-toggle::before {
+  .slow-speed-option [type="checkbox"]:checked + .slow-speed-toggle::after,
+  .slow-speed-option [type="checkbox"]:checked + .slow-speed-toggle::before {
     background: var(--google-blue-300);
   }
 }

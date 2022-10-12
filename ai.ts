@@ -1,33 +1,35 @@
-var genetic = Genetic.create();
+import Genetic, { Stats } from "@glavin001/genetic-js";
+import { Population } from "@glavin001/genetic-js/dist/src/Selection";
 
-genetic.optimize = Genetic.Optimize.Maximize;
-genetic.select1 = Genetic.Select1.Tournament2;
-genetic.select2 = Genetic.Select2.Tournament2;
-
-genetic.seed = function () {
-  return Math.random();
+type Entity = string;
+type UserData = {
+  solution: string;
 };
 
-genetic.fitness = function (entity) {
-  let fitness = 0;
-
-  for (let i = 0; i < entity.length; ++i) {
-    // increase fitness for each character that matches
-    if (entity[i] == this.userData["solution"][i]) fitness += 1;
-
-    // award fractions of a point as we get warmer
-    fitness +=
-      (127 -
-        Math.abs(
-          entity.charCodeAt(i) - this.userData["solution"].charCodeAt(i)
-        )) /
-      50;
+class CustomGenetic extends Genetic.Genetic<Entity, UserData> {
+  // more likely allows the most fit individuals to survive between generations
+  public select1 = Genetic.Select1.RandomLinearRank;
+  // always mates the most fit individual with random individuals
+  public select2 = Genetic.Select2.FittestRandom;
+  // ...
+  public notification({
+    population: pop,
+    isFinished,
+  }: {
+    population: Population<Entity>;
+    generation: number;
+    stats: Stats;
+    isFinished: boolean;
+  }) {
+    if (isFinished) {
+      console.log(
+        `Solution is ${pop[0].entity} (expected ${this.userData.solution})`
+      );
+    }
   }
+}
 
-  return fitness;
-};
-
-const shouldJump = () => {
+const ShouldJump = (inputs) => {
   return true;
 };
 
@@ -86,7 +88,7 @@ const runAI = () => {
       if (!runner.tRex.jumping) {
         var inputs = getObstacles(runner);
 
-        var shouldJump = common.shouldJump(neuralNetwork, inputs);
+        var shouldJump = ShouldJump(inputs);
         if (shouldJump) {
           runner.tRex.startJump(runner.currentSpeed);
         }

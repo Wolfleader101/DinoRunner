@@ -1,5 +1,11 @@
 {
+  "source": "index.html",
+  "scripts": {
+    "start": "parcel --open",
+    "build": "parcel build"
+  },
   "dependencies": {
-    "@glavin001/genetic-js": "^0.2.1"
+    "@glavin001/genetic-js": "^0.2.1",
+    "parcel": "^2.7.0"
   }
 }
