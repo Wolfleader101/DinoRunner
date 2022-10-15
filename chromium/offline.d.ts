@@ -77,7 +77,9 @@ export interface IRunner {
   msPerFrame: number;
   currentSpeed: number;
 
-  obstacles: IObstacle[];
+  horizon: {
+    obstacles: IObstacle[];
+  };
 
   activated: boolean; // Whether the easter egg has been activated.
   playing: boolean; // Whether the game is currently in play state.

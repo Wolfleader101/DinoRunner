@@ -111,7 +111,13 @@ const ShouldJump = (inputs) => {
   return true;
 };
 
-const getObstacles = (runner) => {
+const getObstacles: (runner: IRunner) => {
+  speed: number;
+  distance: number;
+  width: number;
+  height: number;
+  altitude: number;
+} = (runner) => {
   const defaultObstacle = {
     xPos: 650, // not on the canvas
     width: 30, // not important
@@ -123,6 +129,7 @@ const getObstacles = (runner) => {
     ? runner.horizon.obstacles[0]
     : defaultObstacle;
 
+  console.log(obs);
   if (obs.xPos - 50 <= 0) {
     obs =
       runner.horizon.obstacles.length > 1
