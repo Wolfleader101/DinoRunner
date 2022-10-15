@@ -1,37 +1,46 @@
-import { Stats, Genetic, Optimize, GeneticState } from "@glavin001/genetic-js";
+import {
+  Stats,
+  Genetic,
+  GeneticState,
+  Configuration,
+  Optimize,
+} from "@glavin001/genetic-js";
 import {
   Population,
   Select1,
   Select2,
 } from "@glavin001/genetic-js/dist/src/Selection";
 
-type Entity = string;
+type Entity = number;
+
 type UserData = {
   solution: string;
 };
 
 class CustomGenetic extends Genetic<Entity, UserData> {
   optimize: Optimize.OptimizeFun;
-  protected seed(): string {
+
+  protected seed(): number {
+    return Math.random();
+  }
+  protected mutate(entity: number): number {
     throw new Error("Method not implemented.");
   }
-  protected mutate(entity: string): string {
+  protected crossover(mother: number, father: number): [number, number] {
     throw new Error("Method not implemented.");
   }
-  protected crossover(mother: string, father: string): [string, string] {
+  protected fitness(entity: number): number | Promise<number> {
     throw new Error("Method not implemented.");
   }
-  protected fitness(entity: string): number | Promise<number> {
+  protected shouldContinue(state: GeneticState<number>): boolean {
     throw new Error("Method not implemented.");
   }
-  protected shouldContinue(state: GeneticState<string>): boolean {
-    throw new Error("Method not implemented.");
-  }
+
   // more likely allows the most fit individuals to survive between generations
-  public select1 = Select1.RandomLinearRank;
+  public select1 = Select1.Tournament2;
   // always mates the most fit individual with random individuals
-  public select2 = Select2.FittestRandom;
-  // ...
+  public select2 = Select2.Tournament2;
+
   public notification({
     population: pop,
     isFinished,
@@ -41,6 +50,7 @@ class CustomGenetic extends Genetic<Entity, UserData> {
     stats: Stats;
     isFinished: boolean;
   }) {
+    console.log("test");
     if (isFinished) {
       console.log(
         `Solution is ${pop[0].entity} (expected ${this.userData.solution})`
@@ -48,6 +58,20 @@ class CustomGenetic extends Genetic<Entity, UserData> {
     }
   }
 }
+
+const userData: UserData = {
+  solution: "thisisthesolution",
+};
+
+const config: Partial<Configuration> = {
+  crossover: 0.75,
+  iterations: 2000,
+  mutation: 0.3,
+  size: 20,
+};
+
+const genetic = new CustomGenetic(config, userData);
+genetic.evolve();
 
 const ShouldJump = (inputs) => {
   return true;
