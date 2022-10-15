@@ -11,30 +11,36 @@ import {
   Select2,
 } from "@glavin001/genetic-js/dist/src/Selection";
 
-type Entity = number;
+type Entity = {
+  isAlive: boolean;
+  shouldJump: number;
+};
 
 type UserData = {
   solution: string;
 };
 
 class CustomGenetic extends Genetic<Entity, UserData> {
-  optimize: Optimize.OptimizeFun;
+  protected seed(): Entity {
+    return {
+      isAlive: true,
+      shouldJump: Math.random(),
+    };
+  }
+  protected mutate(entity: Entity): Entity {
+    throw new Error("Method not implemented.");
+  }
+  protected crossover(mother: Entity, father: Entity): [Entity, Entity] {
+    throw new Error("Method not implemented.");
+  }
+  protected fitness(entity: Entity): number | Promise<number> {
+    throw new Error("Method not implemented.");
+  }
+  protected shouldContinue(state: GeneticState<Entity>): boolean {
+    throw new Error("Method not implemented.");
+  }
 
-  protected seed(): number {
-    return Math.random();
-  }
-  protected mutate(entity: number): number {
-    throw new Error("Method not implemented.");
-  }
-  protected crossover(mother: number, father: number): [number, number] {
-    throw new Error("Method not implemented.");
-  }
-  protected fitness(entity: number): number | Promise<number> {
-    throw new Error("Method not implemented.");
-  }
-  protected shouldContinue(state: GeneticState<number>): boolean {
-    throw new Error("Method not implemented.");
-  }
+  optimize: Optimize.OptimizeFun;
 
   // more likely allows the most fit individuals to survive between generations
   public select1 = Select1.Tournament2;
@@ -85,12 +91,12 @@ const getObstacles = (runner) => {
     yPos: 100, // not important
   };
 
-  let o = runner.horizon.obstacles.length
+  let obs = runner.horizon.obstacles.length
     ? runner.horizon.obstacles[0]
     : defaultObstacle;
 
-  if (o.xPos - 50 <= 0) {
-    o =
+  if (obs.xPos - 50 <= 0) {
+    obs =
       runner.horizon.obstacles.length > 1
         ? runner.horizon.obstacles[1]
         : defaultObstacle;
@@ -98,14 +104,14 @@ const getObstacles = (runner) => {
 
   return {
     speed: runner.currentSpeed,
-    distance: o.xPos - 50,
-    width: o.width,
-    height: o.typeConfig.height,
+    distance: obs.xPos - 50,
+    width: obs.width,
+    height: obs.typeConfig.height,
     altitude:
       150 /* canvas height */ -
         10 /* earth */ -
-        o.yPos /* pos from top */ -
-        o.typeConfig.height /* height of the obstacle */ >
+        obs.yPos /* pos from top */ -
+        obs.typeConfig.height /* height of the obstacle */ >
       40
         ? 1
         : 0,
