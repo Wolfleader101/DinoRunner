@@ -59,7 +59,10 @@ export interface IRunner {
   containerEl: string | null;
   snackbarEl: string | null;
 
-  config: object;
+  config: {
+    MAX_SPEED: number;
+    SPEED: number;
+  };
   // Logical dimensions of the container.
   dimensions: {
     WIDTH: number;

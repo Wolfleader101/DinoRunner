@@ -23,6 +23,7 @@ type UserData = {
 
 type JumpInputs = {
   speed: number;
+  maxSpeed: number;
   distance: number;
   width: number;
   height: number;
@@ -39,6 +40,8 @@ class CustomGenetic extends Genetic<Entity, UserData> {
     runner.startGame();
     runner.playIntro();
     runner.tRex.startJump(runner.currentSpeed);
+
+    console.log(runner.config.MAX_SPEED);
 
     setInterval(() => {
       if (!runner.playing) {
@@ -116,10 +119,20 @@ const config: Partial<Configuration> = {
 };
 
 const ShouldJump = (inputs: JumpInputs) => {
-  if (inputs.altitude >= 50) return false;
+  if (inputs.altitude) return false;
 
-  if (inputs.distance <= 50) {
-    return true;
+  if (inputs.speed > inputs.maxSpeed * 0.75) {
+    if (inputs.distance <= 100) {
+      return true;
+    }
+  } else if (inputs.speed > inputs.maxSpeed * 0.9) {
+    if (inputs.distance <= 125) {
+      return true;
+    }
+  } else {
+    if (inputs.distance <= 50) {
+      return true;
+    }
   }
 
   return false;
@@ -146,6 +159,7 @@ const getObstacles: (runner: IRunner) => JumpInputs = (runner) => {
 
   return {
     speed: runner.currentSpeed,
+    maxSpeed: runner.config.MAX_SPEED,
     distance: obs.xPos - 50,
     width: obs.width,
     height: obs.typeConfig.height,
