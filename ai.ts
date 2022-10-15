@@ -1,3 +1,4 @@
+import { IRunner } from "./chromium/offline.d";
 import {
   Stats,
   Genetic,
@@ -10,6 +11,8 @@ import {
   Select1,
   Select2,
 } from "@glavin001/genetic-js/dist/src/Selection";
+
+import Runner from "chromium/offline.js";
 
 type Entity = {
   isAlive: boolean;
@@ -24,6 +27,11 @@ type UserData = {
 const HIGH_SCORE = 1000;
 class CustomGenetic extends Genetic<Entity, UserData> {
   protected seed(): Entity {
+    const wRunner: IRunner = window.Runner;
+    var runner = wRunner.instance_;
+
+    console.log(runner);
+
     return {
       isAlive: true,
       shouldJump: Math.random(),
@@ -63,7 +71,6 @@ class CustomGenetic extends Genetic<Entity, UserData> {
     stats: Stats;
     isFinished: boolean;
   }) {
-    console.log(population);
     if (isFinished) {
       console.log(pop[0]);
       console.log(
@@ -83,9 +90,6 @@ const config: Partial<Configuration> = {
   mutation: 0.3,
   size: 20,
 };
-
-const genetic = new CustomGenetic(config, userData);
-genetic.evolve();
 
 const ShouldJump = (inputs) => {
   return true;
@@ -127,32 +131,35 @@ const getObstacles = (runner) => {
 };
 
 const runAI = () => {
-  const wRunner = window.Runner;
-  var runner = wRunner.instance_;
+  //   const wRunner = window.Runner;
+  //   var runner = wRunner.instance_;
 
-  var init: null | boolean = null;
+  //   var init: null | boolean = null;
 
-  setInterval(function () {
-    if (runner && init === null) {
-      runner.startGame();
-      runner.playIntro();
-      init = false;
-    } else if (init === false && runner.playingIntro === false) {
-      runner.tRex.startJump(runner.currentSpeed);
-      init = true;
-    } else if (init && !runner.playing) {
-      runner.restart();
-    } else if (init) {
-      if (!runner.tRex.jumping) {
-        var inputs = getObstacles(runner);
+  //   setInterval(function () {
+  //     if (runner && init === null) {
+  //       runner.startGame();
+  //       runner.playIntro();
+  //       init = false;
+  //     } else if (init === false && runner.playingIntro === false) {
+  //       runner.tRex.startJump(runner.currentSpeed);
+  //       init = true;
+  //     } else if (init && !runner.playing) {
+  //       runner.restart();
+  //     } else if (init) {
+  //       if (!runner.tRex.jumping) {
+  //         var inputs = getObstacles(runner);
 
-        var shouldJump = ShouldJump(inputs);
-        if (shouldJump) {
-          runner.tRex.startJump(runner.currentSpeed);
-        }
-      }
-    }
-  }, 50);
+  //         var shouldJump = ShouldJump(inputs);
+  //         if (shouldJump) {
+  //           runner.tRex.startJump(runner.currentSpeed);
+  //         }
+  //       }
+  //     }
+  //   }, 50);
+
+  const genetic = new CustomGenetic(config, userData);
+  genetic.evolve();
 };
 
 document.addEventListener("DOMContentLoaded", runAI);
