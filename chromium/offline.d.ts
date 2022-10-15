@@ -12,17 +12,48 @@ export interface IObstacle {
   typeConfig: IObstacleType;
   gapCoefficient: number;
   size: number;
-  //   dimensions = dimensions;
+  //   dimensions : dimensions;
   xPos: number;
   yPos: number;
   width: number;
-  //   collisionBoxes = [];
+  //   collisionBoxes : [];
   gap: number;
   speedOffset: number;
 }
 
+export interface ITrex {
+  xPos: number;
+  yPos: number;
+  xInitialPos: number;
+  // Position when on the ground.
+  groundYPos: number;
+  currentFrame: number;
+  timer: number;
+  msPerFrame: number;
+  //   config : Object.assign(Trex.config, Trex.normalJumpConfig);
+  // Current status.
+  status: {
+    CRASHED: "CRASHED";
+    DUCKING: "DUCKING";
+    JUMPING: "JUMPING";
+    RUNNING: "RUNNING";
+    WAITING: "WAITING";
+  };
+  jumping: boolean;
+  ducking: boolean;
+  jumpVelocity: number;
+  reachedMinHeight: boolean;
+  speedDrop: boolean;
+  jumpCount: number;
+  jumpspotX: number;
+  flashing: boolean;
+
+  startJump(speed: number): void;
+}
 export interface IRunner {
   instance_: IRunner;
+
+  trex: ITrex;
 
   outerContainerEl: string;
   containerEl: string | null;

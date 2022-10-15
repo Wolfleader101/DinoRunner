@@ -12,12 +12,9 @@ import {
   Select2,
 } from "@glavin001/genetic-js/dist/src/Selection";
 
-import Runner from "chromium/offline.js";
-
 type Entity = {
-  isAlive: boolean;
   shouldJump: number;
-  distanceRun: number;
+  runner: IRunner;
 };
 
 type UserData = {
@@ -30,12 +27,9 @@ class CustomGenetic extends Genetic<Entity, UserData> {
     const wRunner: IRunner = window.Runner;
     var runner = wRunner.instance_;
 
-    console.log(runner);
-
     return {
-      isAlive: true,
       shouldJump: Math.random(),
-      distanceRun: 0,
+      runner: runner,
     };
   }
   protected mutate(entity: Entity): Entity {
