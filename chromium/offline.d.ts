@@ -53,7 +53,7 @@ export interface ITrex {
 export interface IRunner {
   instance_: IRunner;
 
-  trex: ITrex;
+  tRex: ITrex;
 
   outerContainerEl: string;
   containerEl: string | null;
@@ -84,4 +84,8 @@ export interface IRunner {
   crashed: boolean;
 
   playCount: number;
+
+  startGame(): void;
+  playIntro(): void;
+  restart(): void;
 }

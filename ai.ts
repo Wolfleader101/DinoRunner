@@ -27,6 +27,10 @@ class CustomGenetic extends Genetic<Entity, UserData> {
     const wRunner: IRunner = window.Runner;
     var runner = wRunner.instance_;
 
+    runner.startGame();
+    runner.playIntro();
+    runner.tRex.startJump(runner.currentSpeed);
+
     return {
       shouldJump: Math.random(),
       runner: runner,
@@ -39,7 +43,7 @@ class CustomGenetic extends Genetic<Entity, UserData> {
     return [mother, father];
   }
   protected fitness(entity: Entity): number | Promise<number> {
-    return entity.distanceRun / HIGH_SCORE;
+    return entity.runner.distanceRan / HIGH_SCORE;
   }
   protected shouldContinue(state: GeneticState<Entity>): boolean {
     return true;
@@ -65,6 +69,19 @@ class CustomGenetic extends Genetic<Entity, UserData> {
     stats: Stats;
     isFinished: boolean;
   }) {
+    pop.forEach((el) => {
+      if (!el.entity.runner.playing) {
+        el.entity.runner.restart();
+      } else if (!el.entity.runner.tRex.jumping) {
+        var inputs = getObstacles(el.entity.runner);
+
+        var shouldJump = ShouldJump(inputs);
+        if (shouldJump) {
+          el.entity.runner.tRex.startJump(el.entity.runner.currentSpeed);
+        }
+      }
+    });
+
     if (isFinished) {
       console.log(pop[0]);
       console.log(
@@ -82,7 +99,7 @@ const config: Partial<Configuration> = {
   crossover: 0.75,
   iterations: 2000,
   mutation: 0.3,
-  size: 20,
+  size: 2,
 };
 
 const ShouldJump = (inputs) => {
