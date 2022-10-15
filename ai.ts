@@ -21,6 +21,14 @@ type UserData = {
   solution: number;
 };
 
+type JumpInputs = {
+  speed: number;
+  distance: number;
+  width: number;
+  height: number;
+  altitude: number;
+};
+
 const HIGH_SCORE = 1000;
 const DIST_COEFFICIENT = 0.025;
 class CustomGenetic extends Genetic<Entity, UserData> {
@@ -38,7 +46,7 @@ class CustomGenetic extends Genetic<Entity, UserData> {
       } else if (!runner.tRex.jumping) {
         var inputs = getObstacles(runner);
 
-        console.log(Math.ceil(runner.distanceRan) * DIST_COEFFICIENT);
+        // console.log(Math.ceil(runner.distanceRan) * DIST_COEFFICIENT);
 
         var shouldJump = ShouldJump(inputs);
         if (shouldJump) {
@@ -107,17 +115,17 @@ const config: Partial<Configuration> = {
   size: 2,
 };
 
-const ShouldJump = (inputs) => {
-  return true;
+const ShouldJump = (inputs: JumpInputs) => {
+  if (inputs.altitude >= 50) return false;
+
+  if (inputs.distance <= 50) {
+    return true;
+  }
+
+  return false;
 };
 
-const getObstacles: (runner: IRunner) => {
-  speed: number;
-  distance: number;
-  width: number;
-  height: number;
-  altitude: number;
-} = (runner) => {
+const getObstacles: (runner: IRunner) => JumpInputs = (runner) => {
   const defaultObstacle = {
     xPos: 650, // not on the canvas
     width: 30, // not important
@@ -129,7 +137,6 @@ const getObstacles: (runner: IRunner) => {
     ? runner.horizon.obstacles[0]
     : defaultObstacle;
 
-  console.log(obs);
   if (obs.xPos - 50 <= 0) {
     obs =
       runner.horizon.obstacles.length > 1
