@@ -34,20 +34,18 @@ const HIGH_SCORE = 10000;
 const DIST_COEFFICIENT = 0.025;
 
 class CustomGenetic extends Genetic<Entity, UserData> {
-  protected seed(): Entity {
-    const wRunner: IRunner = window.Runner;
-    var runner = wRunner.instance_;
+  protected seed(): Promise<Entity> {
+    return new Promise<Entity>(async (resolve) => {
+      const wRunner: IRunner = window.Runner;
+      var runner = wRunner.instance_;
 
-    runner.startGame();
-    runner.playIntro();
-    runner.tRex.startJump(runner.currentSpeed);
+      runner.startGame();
+      runner.playIntro();
+      runner.tRex.startJump(runner.currentSpeed);
 
-    console.log(runner.config.MAX_SPEED);
+      console.log(runner.config.MAX_SPEED);
 
-    const run = () => {
-      let ended = false;
-
-      setTimeout(() => {
+      let Run = async () => {
         if (!runner.tRex.jumping) {
           var inputs = getObstacles(runner);
 
@@ -58,37 +56,32 @@ class CustomGenetic extends Genetic<Entity, UserData> {
             runner.tRex.startJump(runner.currentSpeed);
           }
         }
+      };
 
-        if (runner.playing) run();
-        else ended = true;
-      }, 25);
+      await Run();
 
-      while (!ended) {}
-      return ended;
-    };
+      console.log("test");
 
-    let wait = run();
-    console.log(wait);
+      resolve({
+        shouldJump: Math.random(),
+        runner: runner,
+      });
 
-    // setInterval(() => {
-    //   if (!runner.playing) {
-    //     runner.restart();
-    //   } else if (!runner.tRex.jumping) {
-    //     var inputs = getObstacles(runner);
+      // setInterval(() => {
+      //   if (!runner.playing) {
+      //     runner.restart();
+      //   } else if (!runner.tRex.jumping) {
+      //     var inputs = getObstacles(runner);
 
-    //     // console.log(Math.ceil(runner.distanceRan) * DIST_COEFFICIENT);
+      //     // console.log(Math.ceil(runner.distanceRan) * DIST_COEFFICIENT);
 
-    //     var shouldJump = ShouldJump(inputs);
-    //     if (shouldJump) {
-    //       runner.tRex.startJump(runner.currentSpeed);
-    //     }
-    //   }
-    // }, 50);
-
-    return {
-      shouldJump: Math.random(),
-      runner: runner,
-    };
+      //     var shouldJump = ShouldJump(inputs);
+      //     if (shouldJump) {
+      //       runner.tRex.startJump(runner.currentSpeed);
+      //     }
+      //   }
+      // }, 50);
+    });
   }
   protected mutate(entity: Entity): Entity {
     return entity;
