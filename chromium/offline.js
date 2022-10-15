@@ -1660,12 +1660,12 @@ GeneratedSoundFx.prototype = {
   },
 
   background() {
-    if (this.audioCues) {
-      const now = this.context.currentTime;
-      this.playNote(493.883, now, 0.116);
-      this.playNote(659.255, now + 0.116, 0.232);
-      this.loopFootSteps();
-    }
+    // if (this.audioCues) {
+    //   const now = this.context.currentTime;
+    //   this.playNote(493.883, now, 0.116);
+    //   this.playNote(659.255, now + 0.116, 0.232);
+    //   this.loopFootSteps();
+    // }
   },
 
   loopFootSteps() {

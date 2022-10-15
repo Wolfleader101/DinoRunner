@@ -14,33 +14,38 @@ import {
 type Entity = {
   isAlive: boolean;
   shouldJump: number;
+  distanceRun: number;
 };
 
 type UserData = {
-  solution: string;
+  solution: number;
 };
 
+const HIGH_SCORE = 1000;
 class CustomGenetic extends Genetic<Entity, UserData> {
   protected seed(): Entity {
     return {
       isAlive: true,
       shouldJump: Math.random(),
+      distanceRun: 0,
     };
   }
   protected mutate(entity: Entity): Entity {
-    throw new Error("Method not implemented.");
+    return entity;
   }
   protected crossover(mother: Entity, father: Entity): [Entity, Entity] {
-    throw new Error("Method not implemented.");
+    return [mother, father];
   }
   protected fitness(entity: Entity): number | Promise<number> {
-    throw new Error("Method not implemented.");
+    return entity.distanceRun / HIGH_SCORE;
   }
   protected shouldContinue(state: GeneticState<Entity>): boolean {
-    throw new Error("Method not implemented.");
+    return true;
   }
 
-  optimize: Optimize.OptimizeFun;
+  public optimize = (fitnessA: number, fitnessB: number) => {
+    return fitnessA >= fitnessB;
+  };
 
   // more likely allows the most fit individuals to survive between generations
   public select1 = Select1.Tournament2;
@@ -50,14 +55,17 @@ class CustomGenetic extends Genetic<Entity, UserData> {
   public notification({
     population: pop,
     isFinished,
+    stats,
+    population,
   }: {
     population: Population<Entity>;
     generation: number;
     stats: Stats;
     isFinished: boolean;
   }) {
-    console.log("test");
+    console.log(population);
     if (isFinished) {
+      console.log(pop[0]);
       console.log(
         `Solution is ${pop[0].entity} (expected ${this.userData.solution})`
       );
@@ -66,7 +74,7 @@ class CustomGenetic extends Genetic<Entity, UserData> {
 }
 
 const userData: UserData = {
-  solution: "thisisthesolution",
+  solution: 1000,
 };
 
 const config: Partial<Configuration> = {
@@ -122,7 +130,7 @@ const runAI = () => {
   const wRunner = window.Runner;
   var runner = wRunner.instance_;
 
-  var init = null;
+  var init: null | boolean = null;
 
   setInterval(function () {
     if (runner && init === null) {
