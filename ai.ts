@@ -1,13 +1,17 @@
-import Genetic, { Stats } from "@glavin001/genetic-js";
-import { Population } from "@glavin001/genetic-js/dist/src/Selection";
+import { Stats, Genetic, Optimize, GeneticState } from "@glavin001/genetic-js";
+import {
+  Population,
+  Select1,
+  Select2,
+} from "@glavin001/genetic-js/dist/src/Selection";
 
 type Entity = string;
 type UserData = {
   solution: string;
 };
 
-class CustomGenetic extends Genetic.Genetic<Entity, UserData> {
-  optimize: Genetic.Optimize.OptimizeFun;
+class CustomGenetic extends Genetic<Entity, UserData> {
+  optimize: Optimize.OptimizeFun;
   protected seed(): string {
     throw new Error("Method not implemented.");
   }
@@ -20,13 +24,13 @@ class CustomGenetic extends Genetic.Genetic<Entity, UserData> {
   protected fitness(entity: string): number | Promise<number> {
     throw new Error("Method not implemented.");
   }
-  protected shouldContinue(state: Genetic.GeneticState<string>): boolean {
+  protected shouldContinue(state: GeneticState<string>): boolean {
     throw new Error("Method not implemented.");
   }
   // more likely allows the most fit individuals to survive between generations
-  public select1 = Genetic.Select1.RandomLinearRank;
+  public select1 = Select1.RandomLinearRank;
   // always mates the most fit individual with random individuals
-  public select2 = Genetic.Select2.FittestRandom;
+  public select2 = Select2.FittestRandom;
   // ...
   public notification({
     population: pop,
