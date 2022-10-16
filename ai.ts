@@ -58,6 +58,7 @@ const fastJumpDis = [
   245, 250, 255, 260, 265, 270, 275, 280, 285, 290, 295, 300,
 ];
 
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 class CustomGenetic extends Genetic<Entity, UserData> {
   protected async seed(): Promise<Entity> {
     const wRunner: IRunner = window.Runner;
@@ -164,6 +165,7 @@ class CustomGenetic extends Genetic<Entity, UserData> {
     let Run = async () => {
       return await new Promise(async (res) => {
         console.log(`Starting Fitness for ${entity.normShouldJumpDist}`);
+
         const interval = setInterval(() => {
           if (!runner.playing) {
             res("");
@@ -315,8 +317,6 @@ const getObstacles: (runner: IRunner) => JumpInputs = (runner) => {
         : 0,
   };
 };
-
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const runAI = async () => {
   document.body.classList.add("offline");
