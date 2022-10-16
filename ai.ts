@@ -83,6 +83,9 @@ class CustomGenetic extends Genetic<Entity, UserData> {
     return entity;
   }
   protected crossover(mother: Entity, father: Entity): [Entity, Entity] {
+    console.log("CROSSOVER");
+    console.log(mother);
+    console.log(father);
     let son = { ...father };
     let daughter = { ...mother };
 
@@ -112,16 +115,6 @@ class CustomGenetic extends Genetic<Entity, UserData> {
       if (i < A || i > B) daughter.jumpDists[i] = mother.jumpDists[i];
       else daughter.jumpDists[i] = father.jumpDists[i];
     }
-
-    // let sonJump = new Array()
-    //   .concat(father.jumpDists.slice(0, A))
-    //   .concat(mother.jumpDists.splice(A, B - A))
-    //   .concat(father[B]);
-
-    // let daughterJump = mother.jumpDists
-    //   .slice(0, A)
-    //   .concat(father.jumpDists.splice(A, B - A))
-    //   .concat(mother[B]);
 
     console.log("*********************");
     console.log("Cross over:");
@@ -195,9 +188,9 @@ class CustomGenetic extends Genetic<Entity, UserData> {
   };
 
   // more likely allows the most fit individuals to survive between generations
-  public select1 = Select1.Tournament2;
+  public select1 = Select1.Fittest;
   // always mates the most fit individual with random individuals
-  public select2 = Select2.Tournament2;
+  public select2 = Select2.FittestRandom;
 
   public async notification({
     population: pop,
@@ -230,9 +223,9 @@ const userData: UserData = {
 
 const config: Partial<Configuration> = {
   crossover: 0.75,
-  iterations: 5,
-  mutation: 0.3,
-  size: 3,
+  iterations: 2,
+  mutation: 0.5,
+  size: 4,
 };
 
 const ShouldJump = (jumpDists: number[], inputs: JumpInputs) => {

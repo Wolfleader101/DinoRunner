@@ -13,7 +13,7 @@ export type PairWiseSelection<Entity> = (
 ) => [Entity, Entity];
 
 export const Select1 = {
-  Tournament2: function<Entity>(
+  Tournament2: function <Entity>(
     this: Genetic<Entity, any>,
     pop: Population<Entity>
   ): Entity {
@@ -24,7 +24,7 @@ export const Select1 = {
       ? firstPick.entity
       : secondPick.entity;
   },
-  Tournament3: function<Entity>(
+  Tournament3: function <Entity>(
     this: Genetic<Entity, any>,
     pop: Population<Entity>
   ): Entity {
@@ -38,19 +38,19 @@ export const Select1 = {
     best = this.optimize(best.fitness, thirdPick.fitness) ? best : thirdPick;
     return best.entity;
   },
-  Fittest: function<Entity>(
+  Fittest: function <Entity>(
     this: Genetic<Entity, any>,
     pop: Population<Entity>
   ): Entity {
     return pop[0].entity;
   },
-  Random: function<Entity>(
+  Random: function <Entity>(
     this: Genetic<Entity, any>,
     pop: Population<Entity>
   ): Entity {
     return pop[Math.floor(Math.random() * pop.length)].entity;
   },
-  RandomLinearRank: function<Entity>(
+  RandomLinearRank: function <Entity>(
     this: Genetic<Entity, any>,
     pop: Population<Entity>
   ): Entity {
@@ -61,7 +61,7 @@ export const Select1 = {
       )
     ].entity;
   },
-  Sequential: function<Entity>(
+  Sequential: function <Entity>(
     this: Genetic<Entity, any>,
     pop: Population<Entity>
   ): Entity {
@@ -71,7 +71,7 @@ export const Select1 = {
 };
 
 export const Select2 = {
-  Tournament2: function<Entity>(
+  Tournament2: function <Entity>(
     this: Genetic<Entity, any>,
     pop: Population<Entity>
   ): [Entity, Entity] {
@@ -80,7 +80,7 @@ export const Select2 = {
       Select1.Tournament2.call(this, pop),
     ];
   },
-  Tournament3: function<Entity>(
+  Tournament3: function <Entity>(
     this: Genetic<Entity, any>,
     pop: Population<Entity>
   ): [Entity, Entity] {
@@ -89,13 +89,13 @@ export const Select2 = {
       Select1.Tournament3.call(this, pop),
     ];
   },
-  Random: function<Entity>(
+  Random: function <Entity>(
     this: Genetic<Entity, any>,
     pop: Population<Entity>
   ): [Entity, Entity] {
     return [Select1.Random.call(this, pop), Select1.Random.call(this, pop)];
   },
-  RandomLinearRank: function<Entity>(
+  RandomLinearRank: function <Entity>(
     this: Genetic<Entity, any>,
     pop: Population<Entity>
   ): [Entity, Entity] {
@@ -104,7 +104,7 @@ export const Select2 = {
       Select1.RandomLinearRank.call(this, pop),
     ];
   },
-  Sequential: function<Entity>(
+  Sequential: function <Entity>(
     this: Genetic<Entity, any>,
     pop: Population<Entity>
   ): [Entity, Entity] {
@@ -113,7 +113,7 @@ export const Select2 = {
       Select1.Sequential.call(this, pop),
     ];
   },
-  FittestRandom: function<Entity>(
+  FittestRandom: function <Entity>(
     this: Genetic<Entity, any>,
     pop: Population<Entity>
   ): [Entity, Entity] {
