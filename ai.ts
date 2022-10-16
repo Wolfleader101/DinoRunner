@@ -1,19 +1,16 @@
 import { IRunner } from "./chromium/offline.d";
 import {
-  Stats,
   Genetic,
   GeneticState,
-  Configuration,
-  Optimize,
-} from "@glavin001/genetic-js";
-import {
-  Population,
   Select1,
   Select2,
-} from "@glavin001/genetic-js/dist/src/Selection";
+  Stats,
+  Configuration,
+} from "./genetic-js";
+import { Population } from "./genetic-js/Selection";
 
 type Entity = {
-  shouldJump: number;
+  // shouldJump: number;
   runner: IRunner;
 };
 
@@ -33,51 +30,43 @@ type JumpInputs = {
 const HIGH_SCORE = 10000;
 const DIST_COEFFICIENT = 0.025;
 
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-
 class CustomGenetic extends Genetic<Entity, UserData> {
-  protected seed(): Promise<Entity> {
-    return new Promise<Entity>(async (resolve) => {
-      const wRunner: IRunner = window.Runner;
-      var runner = wRunner.instance_;
+  protected async seed(): Promise<Entity> {
+    const wRunner: IRunner = window.Runner;
+    var runner = wRunner.instance_;
 
-      runner.startGame();
-      runner.playIntro();
-      runner.tRex.startJump(runner.currentSpeed);
+    runner.startGame();
+    runner.playIntro();
+    runner.tRex.startJump(runner.currentSpeed);
 
-      console.log(runner.config.MAX_SPEED);
+    console.log(runner.config.MAX_SPEED);
 
-      let Run = async () => {
-        return await new Promise((res) => {
-          const interval = setInterval(() => {
-            if (!runner.playing) {
-              res("");
-              clearInterval(interval);
-            } else if (!runner.tRex.jumping) {
-              var inputs = getObstacles(runner);
+    let Run = async () => {
+      return await new Promise((res) => {
+        const interval = setInterval(() => {
+          if (!runner.playing) {
+            res("");
+            clearInterval(interval);
+          } else if (!runner.tRex.jumping) {
+            var inputs = getObstacles(runner);
 
-              // console.log(Math.ceil(runner.distanceRan) * DIST_COEFFICIENT);
+            // console.log(Math.ceil(runner.distanceRan) * DIST_COEFFICIENT);
 
-              var shouldJump = ShouldJump(inputs);
-              if (shouldJump) {
-                runner.tRex.startJump(runner.currentSpeed);
-              }
+            var shouldJump = ShouldJump(inputs);
+            if (shouldJump) {
+              runner.tRex.startJump(runner.currentSpeed);
             }
-          }, 50);
-        });
-      };
-
-      await Run();
-      runner.restart();
-
-      console.log("test");
-      console.log(runner.distanceRan);
-
-      resolve({
-        shouldJump: Math.random(),
-        runner: runner,
+          }
+        }, 50);
       });
-    });
+    };
+
+    await Run();
+    runner.restart();
+
+    return {
+      runner: runner,
+    };
   }
   protected mutate(entity: Entity): Entity {
     return entity;

@@ -801,24 +801,22 @@ Runner.prototype = {
 
       // For a11y, audio cues.
       if (Runner.audioCues && hasObstacles) {
-        const jumpObstacle =
-          this.horizon.obstacles[0].typeConfig.type != "COLLECTABLE";
-
-        if (!this.horizon.obstacles[0].jumpAlerted) {
-          const threshold = Runner.isMobileMouseInput
-            ? Runner.config.AUDIOCUE_PROXIMITY_THRESHOLD_MOBILE_A11Y
-            : Runner.config.AUDIOCUE_PROXIMITY_THRESHOLD;
-          const adjProximityThreshold =
-            threshold +
-            threshold * Math.log10(this.currentSpeed / Runner.config.SPEED);
-
-          if (this.horizon.obstacles[0].xPos < adjProximityThreshold) {
-            if (jumpObstacle) {
-              this.generatedSoundFx.jump();
-            }
-            this.horizon.obstacles[0].jumpAlerted = true;
-          }
-        }
+        // const jumpObstacle =
+        //   this.horizon.obstacles[0].typeConfig.type != "COLLECTABLE";
+        // if (!this.horizon.obstacles[0].jumpAlerted) {
+        //   const threshold = Runner.isMobileMouseInput
+        //     ? Runner.config.AUDIOCUE_PROXIMITY_THRESHOLD_MOBILE_A11Y
+        //     : Runner.config.AUDIOCUE_PROXIMITY_THRESHOLD;
+        //   const adjProximityThreshold =
+        //     threshold +
+        //     threshold * Math.log10(this.currentSpeed / Runner.config.SPEED);
+        //   if (this.horizon.obstacles[0].xPos < adjProximityThreshold) {
+        //     if (jumpObstacle) {
+        //       this.generatedSoundFx.jump();
+        //     }
+        //     this.horizon.obstacles[0].jumpAlerted = true;
+        //   }
+        // }
       }
 
       // Activated alt game mode.
