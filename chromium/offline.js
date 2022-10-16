@@ -1404,11 +1404,11 @@ Runner.prototype = {
       this.distanceMeter.reset();
       this.horizon.reset();
       this.tRex.reset();
-      this.playSound(this.soundFx.BUTTON_PRESS);
+      // this.playSound(this.soundFx.BUTTON_PRESS);
       this.invert(true);
       this.flashTimer = null;
       this.update();
-      this.gameOverPanel.reset();
+      // this.gameOverPanel.reset();
       this.generatedSoundFx.background();
       this.containerEl.setAttribute("title", getA11yString(A11Y_STRINGS.jump));
       announcePhrase(getA11yString(A11Y_STRINGS.started));

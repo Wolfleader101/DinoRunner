@@ -48,31 +48,30 @@ class CustomGenetic extends Genetic<Entity, UserData> {
       console.log(runner.config.MAX_SPEED);
 
       let Run = async () => {
-        return await new Promise(res => {
+        return await new Promise((res) => {
+          const interval = setInterval(() => {
+            if (!runner.playing) {
+              res("");
+              clearInterval(interval);
+            } else if (!runner.tRex.jumping) {
+              var inputs = getObstacles(runner);
 
+              // console.log(Math.ceil(runner.distanceRan) * DIST_COEFFICIENT);
 
-        const interval = setInterval(() => {
-        if (!runner.playing) {
-          res('');
-          clearInterval(interval);
-        } else if (!runner.tRex.jumping) {
-          var inputs = getObstacles(runner);
-
-          // console.log(Math.ceil(runner.distanceRan) * DIST_COEFFICIENT);
-
-          var shouldJump = ShouldJump(inputs);
-          if (shouldJump) {
-            runner.tRex.startJump(runner.currentSpeed);
-          }
-        }
-      }, 50);
-
-        }
+              var shouldJump = ShouldJump(inputs);
+              if (shouldJump) {
+                runner.tRex.startJump(runner.currentSpeed);
+              }
+            }
+          }, 50);
+        });
       };
 
       await Run();
+      runner.restart();
 
       console.log("test");
+      console.log(runner.distanceRan);
 
       resolve({
         shouldJump: Math.random(),
