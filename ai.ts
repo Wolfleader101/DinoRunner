@@ -66,8 +66,6 @@ class CustomGenetic extends Genetic<Entity, UserData> {
     runner.playIntro();
     runner.tRex.startJump(runner.currentSpeed);
 
-    console.log(runner.config.MAX_SPEED);
-
     const shouldJumpDists: ShouldJumpDists = {
       normShouldJumpDist:
         normalJumpDis[Math.floor(Math.random() * normalJumpDis.length)],
@@ -76,6 +74,8 @@ class CustomGenetic extends Genetic<Entity, UserData> {
       fastShouldJumpDist:
         fastJumpDis[Math.floor(Math.random() * normalJumpDis.length)],
     };
+
+    console.log(runner.config.MAX_SPEED);
     console.log(shouldJumpDists);
 
     let Run = async () => {
@@ -86,7 +86,6 @@ class CustomGenetic extends Genetic<Entity, UserData> {
             clearInterval(interval);
           } else if (!runner.tRex.jumping) {
             var inputs = getObstacles(runner);
-            // console.log(Math.ceil(runner.distanceRan) * DIST_COEFFICIENT);
 
             var shouldJump = ShouldJump(shouldJumpDists, inputs);
             if (shouldJump) {
@@ -98,13 +97,15 @@ class CustomGenetic extends Genetic<Entity, UserData> {
     };
 
     await Run();
+    let ourRunner = { ...runner };
+
     runner.restart();
 
-    console.log(shouldJumpDists);
+    console.log(Math.ceil(ourRunner.distanceRan) * DIST_COEFFICIENT);
 
     return {
       ...shouldJumpDists,
-      runner: runner,
+      runner: ourRunner,
     };
   }
   protected mutate(entity: Entity): Entity {
