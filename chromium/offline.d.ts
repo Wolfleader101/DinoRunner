@@ -47,6 +47,7 @@ export interface ITrex {
   jumpCount: number;
   jumpspotX: number;
   flashing: boolean;
+  playingIntro: boolean;
 
   startJump(speed: number): void;
 }
@@ -89,6 +90,7 @@ export interface IRunner {
   crashed: boolean;
 
   playCount: number;
+  playingIntro: boolean;
 
   startGame(): void;
   playIntro(): void;

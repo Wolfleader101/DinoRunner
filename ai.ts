@@ -62,9 +62,6 @@ class CustomGenetic extends Genetic<Entity, UserData> {
   protected async seed(): Promise<Entity> {
     const wRunner: IRunner = window.Runner;
     var runner = wRunner.instance_;
-    runner.startGame();
-    runner.playIntro();
-    runner.tRex.startJump(runner.currentSpeed);
 
     const shouldJumpDists: ShouldJumpDists = {
       normShouldJumpDist:
@@ -74,43 +71,44 @@ class CustomGenetic extends Genetic<Entity, UserData> {
       fastShouldJumpDist:
         fastJumpDis[Math.floor(Math.random() * normalJumpDis.length)],
     };
-
-    console.log(runner.config.MAX_SPEED);
     console.log(shouldJumpDists);
 
-    let Run = async () => {
-      return await new Promise((res) => {
-        const interval = setInterval(() => {
-          if (!runner.playing) {
-            res("");
-            clearInterval(interval);
-          } else if (!runner.tRex.jumping) {
-            var inputs = getObstacles(runner);
+    // runner.startGame();
+    // runner.playIntro();
+    // runner.tRex.startJump(runner.currentSpeed);
 
-            var shouldJump = ShouldJump(shouldJumpDists, inputs);
-            if (shouldJump) {
-              runner.tRex.startJump(runner.currentSpeed);
-            }
-          }
-        }, 50);
-      });
-    };
+    // let Run = async () => {
+    //   return await new Promise((res) => {
+    //     const interval = setInterval(() => {
+    //       if (!runner.playing) {
+    //         res("");
+    //         clearInterval(interval);
+    //       } else if (!runner.tRex.jumping) {
+    //         var inputs = getObstacles(runner);
 
-    await Run();
-    let ourRunner = { ...runner };
+    //         var shouldJump = ShouldJump(shouldJumpDists, inputs);
+    //         if (shouldJump) {
+    //           runner.tRex.startJump(runner.currentSpeed);
+    //         }
+    //       }
+    //     }, 50);
+    //   });
+    // };
 
-    runner.restart();
+    // await Run();
+    // let ourRunner = { ...runner };
 
-    console.log(Math.ceil(ourRunner.distanceRan) * DIST_COEFFICIENT);
+    // runner.restart();
+
+    // console.log(Math.ceil(ourRunner.distanceRan) * DIST_COEFFICIENT);
 
     return {
       ...shouldJumpDists,
-      runner: ourRunner,
+      runner: runner,
     };
   }
   protected mutate(entity: Entity): Entity {
-    var x = Math.floor(Math.random() * 3);
-
+    console.log("MUTATE");
     entity.normShouldJumpDist =
       Math.floor(Math.random() * 3) > 2
         ? normalJumpDis[Math.floor(Math.random() * normalJumpDis.length)]
@@ -127,6 +125,7 @@ class CustomGenetic extends Genetic<Entity, UserData> {
     return entity;
   }
   protected crossover(mother: Entity, father: Entity): [Entity, Entity] {
+    console.log("CROSSOVER");
     let son = mother;
     let daughter = father;
 
@@ -155,7 +154,48 @@ class CustomGenetic extends Genetic<Entity, UserData> {
 
     return [son, daughter];
   }
-  protected fitness(entity: Entity): number | Promise<number> {
+  protected async fitness(entity: Entity): Promise<number> {
+    console.log("fitness");
+
+    const wRunner: IRunner = window.Runner;
+    var runner = wRunner.instance_;
+    runner.startGame();
+    runner.playIntro();
+    runner.tRex.startJump(runner.currentSpeed);
+
+    let Run = async () => {
+      return await new Promise((res) => {
+        const interval = setInterval(() => {
+          if (!runner.playing) {
+            res("");
+            clearInterval(interval);
+          } else if (!runner.tRex.jumping) {
+            var inputs = getObstacles(runner);
+
+            var shouldJump = ShouldJump(
+              {
+                normShouldJumpDist: entity.normShouldJumpDist,
+                medShouldJumpDist: entity.medShouldJumpDist,
+                fastShouldJumpDist: entity.fastShouldJumpDist,
+              },
+              inputs
+            );
+            if (shouldJump) {
+              runner.tRex.startJump(runner.currentSpeed);
+            }
+          }
+        }, 50);
+      });
+    };
+
+    await Run();
+
+    entity.runner = { ...runner };
+
+    runner.restart();
+
+    console.log(Math.ceil(entity.runner.distanceRan) * DIST_COEFFICIENT);
+
     return (
       (Math.ceil(entity.runner.distanceRan) * DIST_COEFFICIENT) / HIGH_SCORE
     );
@@ -177,17 +217,18 @@ class CustomGenetic extends Genetic<Entity, UserData> {
   // always mates the most fit individual with random individuals
   public select2 = Select2.Tournament2;
 
-  public notification({
+  public async notification({
     population: pop,
     isFinished,
     stats,
-    population,
   }: {
     population: Population<Entity>;
     generation: number;
     stats: Stats;
     isFinished: boolean;
   }) {
+    console.log(stats);
+
     if (isFinished) {
       console.log(pop);
       console.log(
@@ -203,9 +244,9 @@ const userData: UserData = {
 
 const config: Partial<Configuration> = {
   crossover: 0.75,
-  iterations: 2000,
+  iterations: 20,
   mutation: 0.3,
-  size: 20,
+  size: 3,
 };
 
 const ShouldJump = (shouldJumpDists: ShouldJumpDists, inputs: JumpInputs) => {

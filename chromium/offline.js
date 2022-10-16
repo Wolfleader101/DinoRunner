@@ -42,6 +42,7 @@ function Runner(outerContainerId, opt_config) {
 
   this.distanceMeter = null;
   this.distanceRan = 0;
+  this.playingIntro = false;
 
   this.highestScore = 0;
   this.syncHighestScore = false;
@@ -821,18 +822,18 @@ Runner.prototype = {
       }
 
       // Activated alt game mode.
-      if (
-        Runner.isAltGameModeEnabled() &&
-        collision &&
-        this.horizon.obstacles[0].typeConfig.type == "COLLECTABLE"
-      ) {
-        this.horizon.removeFirstObstacle();
-        this.tRex.setFlashing(true);
-        collision = false;
-        this.altGameModeFlashTimer = this.config.FLASH_DURATION;
-        this.runningTime = 0;
-        this.generatedSoundFx.collect();
-      }
+      // if (
+      //   Runner.isAltGameModeEnabled() &&
+      //   collision &&
+      //   this.horizon.obstacles[0].typeConfig.type == "COLLECTABLE"
+      // ) {
+      //   this.horizon.removeFirstObstacle();
+      //   // this.tRex.setFlashing(true);
+      //   collision = false;
+      //   this.altGameModeFlashTimer = this.config.FLASH_DURATION;
+      //   this.runningTime = 0;
+      //   this.generatedSoundFx.collect();
+      // }
 
       if (!collision) {
         this.distanceRan += (this.currentSpeed * deltaTime) / this.msPerFrame;
@@ -2539,6 +2540,7 @@ function Trex(canvas, spritePos) {
   this.jumpspotX = 0;
   this.altGameModeEnabled = false;
   this.flashing = false;
+  this.playingIntro = false;
 
   this.init();
 }
