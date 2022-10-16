@@ -10,12 +10,20 @@ import {
 import { Population } from "./genetic-js/Selection";
 
 type Entity = {
-  // shouldJump: number;
+  normShouldJumpDist: number;
+  medShouldJumpDist: number;
+  fastShouldJumpDist: number;
   runner: IRunner;
 };
 
 type UserData = {
   solution: number;
+};
+
+type ShouldJumpDists = {
+  normShouldJumpDist: number;
+  medShouldJumpDist: number;
+  fastShouldJumpDist: number;
 };
 
 type JumpInputs = {
@@ -27,8 +35,18 @@ type JumpInputs = {
   altitude: number;
 };
 
+declare global {
+  interface Window {
+    Runner: IRunner;
+  }
+}
+
 const HIGH_SCORE = 10000;
 const DIST_COEFFICIENT = 0.025;
+
+const normalJumpDis = [25, 50, 75, 100, 125, 150, 200];
+const mediumJumpDis = [50, 75, 100, 125, 150, 200, 225];
+const fastJumpDis = [75, 100, 125, 150, 200, 225, 250];
 
 class CustomGenetic extends Genetic<Entity, UserData> {
   protected async seed(): Promise<Entity> {
@@ -41,6 +59,15 @@ class CustomGenetic extends Genetic<Entity, UserData> {
 
     console.log(runner.config.MAX_SPEED);
 
+    const shouldJumpDists: ShouldJumpDists = {
+      normShouldJumpDist:
+        normalJumpDis[Math.floor(Math.random() * normalJumpDis.length)],
+      medShouldJumpDist:
+        mediumJumpDis[Math.floor(Math.random() * normalJumpDis.length)],
+      fastShouldJumpDist:
+        fastJumpDis[Math.floor(Math.random() * normalJumpDis.length)],
+    };
+
     let Run = async () => {
       return await new Promise((res) => {
         const interval = setInterval(() => {
@@ -49,10 +76,9 @@ class CustomGenetic extends Genetic<Entity, UserData> {
             clearInterval(interval);
           } else if (!runner.tRex.jumping) {
             var inputs = getObstacles(runner);
-
             // console.log(Math.ceil(runner.distanceRan) * DIST_COEFFICIENT);
 
-            var shouldJump = ShouldJump(inputs);
+            var shouldJump = ShouldJump(shouldJumpDists, inputs);
             if (shouldJump) {
               runner.tRex.startJump(runner.currentSpeed);
             }
@@ -64,7 +90,10 @@ class CustomGenetic extends Genetic<Entity, UserData> {
     await Run();
     runner.restart();
 
+    console.log(shouldJumpDists);
+
     return {
+      ...shouldJumpDists,
       runner: runner,
     };
   }
@@ -123,19 +152,19 @@ const config: Partial<Configuration> = {
   size: 2,
 };
 
-const ShouldJump = (inputs: JumpInputs) => {
+const ShouldJump = (shouldJumpDists: ShouldJumpDists, inputs: JumpInputs) => {
   if (inputs.altitude) return false;
 
-  if (inputs.speed > inputs.maxSpeed * 0.75) {
-    if (inputs.distance <= 100) {
+  if (inputs.speed > inputs.maxSpeed * 0.9) {
+    if (inputs.distance <= shouldJumpDists.fastShouldJumpDist) {
       return true;
     }
-  } else if (inputs.speed > inputs.maxSpeed * 0.9) {
-    if (inputs.distance <= 125) {
+  } else if (inputs.speed > inputs.maxSpeed * 0.75) {
+    if (inputs.distance <= shouldJumpDists.medShouldJumpDist) {
       return true;
     }
   } else {
-    if (inputs.distance <= 50) {
+    if (inputs.distance <= shouldJumpDists.normShouldJumpDist) {
       return true;
     }
   }
