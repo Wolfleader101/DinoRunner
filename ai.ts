@@ -155,8 +155,6 @@ class CustomGenetic extends Genetic<Entity, UserData> {
     return [son, daughter];
   }
   protected async fitness(entity: Entity): Promise<number> {
-    console.log("fitness");
-
     const wRunner: IRunner = window.Runner;
     var runner = wRunner.instance_;
     runner.startGame();
@@ -164,7 +162,8 @@ class CustomGenetic extends Genetic<Entity, UserData> {
     runner.tRex.startJump(runner.currentSpeed);
 
     let Run = async () => {
-      return await new Promise((res) => {
+      return await new Promise(async (res) => {
+        console.log(`Starting Fitness for ${entity.normShouldJumpDist}`);
         const interval = setInterval(() => {
           if (!runner.playing) {
             res("");
@@ -228,6 +227,7 @@ class CustomGenetic extends Genetic<Entity, UserData> {
   public async notification({
     population: pop,
     isFinished,
+    generation,
     stats,
   }: {
     population: Population<Entity>;
@@ -235,14 +235,17 @@ class CustomGenetic extends Genetic<Entity, UserData> {
     stats: Stats;
     isFinished: boolean;
   }) {
+    console.log(`Current generation Stats: Gen #${generation}`);
     console.log(stats);
+    console.log(pop);
 
     if (isFinished) {
-      console.log(pop);
+      console.log(`Finished with pop: ${pop}`);
       // console.log(
       //   `Solution is ${pop[0].entity} (expected ${this.userData.solution})`
       // );
     }
+    console.log("==========");
   }
 }
 
