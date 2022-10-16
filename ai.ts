@@ -44,15 +44,21 @@ declare global {
 const HIGH_SCORE = 10000;
 const DIST_COEFFICIENT = 0.025;
 
-const normalJumpDis = [25, 50, 75, 100, 125, 150, 200];
-const mediumJumpDis = [50, 75, 100, 125, 150, 200, 225];
-const fastJumpDis = [75, 100, 125, 150, 200, 225, 250];
+const normalJumpDis = [50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 105, 110];
+const mediumJumpDis = [
+  75, 80, 85, 90, 95, 100, 105, 110, 115, 120, 125, 130, 135, 140, 145, 150,
+  155, 160, 165, 170, 175, 180, 185, 190, 195, 200, 205, 210, 215, 220, 225,
+];
+const fastJumpDis = [
+  90, 95, 100, 105, 110, 115, 120, 125, 130, 135, 140, 145, 150, 155, 160, 165,
+  170, 175, 180, 185, 190, 195, 200, 205, 210, 215, 220, 225, 230, 235, 240,
+  245, 250, 255, 260, 265, 270, 275, 280, 285, 290, 295, 300,
+];
 
 class CustomGenetic extends Genetic<Entity, UserData> {
   protected async seed(): Promise<Entity> {
     const wRunner: IRunner = window.Runner;
     var runner = wRunner.instance_;
-
     runner.startGame();
     runner.playIntro();
     runner.tRex.startJump(runner.currentSpeed);
@@ -67,6 +73,7 @@ class CustomGenetic extends Genetic<Entity, UserData> {
       fastShouldJumpDist:
         fastJumpDis[Math.floor(Math.random() * normalJumpDis.length)],
     };
+    console.log(shouldJumpDists);
 
     let Run = async () => {
       return await new Promise((res) => {

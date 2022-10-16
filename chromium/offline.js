@@ -663,6 +663,7 @@ Runner.prototype = {
     if (this.isArcadeMode()) {
       this.setArcadeMode();
     }
+
     this.toggleSpeed();
     this.runningTime = 0;
     this.playingIntro = false;
