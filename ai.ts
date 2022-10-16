@@ -109,10 +109,51 @@ class CustomGenetic extends Genetic<Entity, UserData> {
     };
   }
   protected mutate(entity: Entity): Entity {
+    var x = Math.floor(Math.random() * 3);
+
+    entity.normShouldJumpDist =
+      Math.floor(Math.random() * 3) > 2
+        ? normalJumpDis[Math.floor(Math.random() * normalJumpDis.length)]
+        : entity.normShouldJumpDist;
+    entity.medShouldJumpDist =
+      Math.floor(Math.random() * 3) > 2
+        ? mediumJumpDis[Math.floor(Math.random() * mediumJumpDis.length)]
+        : entity.medShouldJumpDist;
+    entity.fastShouldJumpDist =
+      Math.floor(Math.random() * 3) > 2
+        ? fastJumpDis[Math.floor(Math.random() * fastJumpDis.length)]
+        : entity.fastShouldJumpDist;
+
     return entity;
   }
   protected crossover(mother: Entity, father: Entity): [Entity, Entity] {
-    return [mother, father];
+    let son = mother;
+    let daughter = father;
+
+    son.runner.distanceRan = 0;
+    daughter.runner.distanceRan = 0;
+
+    son.normShouldJumpDist = Math.floor(Math.random() * 2)
+      ? mother.normShouldJumpDist
+      : father.normShouldJumpDist;
+    son.medShouldJumpDist = Math.floor(Math.random() * 2)
+      ? mother.medShouldJumpDist
+      : father.medShouldJumpDist;
+    son.fastShouldJumpDist = Math.floor(Math.random() * 2)
+      ? mother.fastShouldJumpDist
+      : father.fastShouldJumpDist;
+
+    daughter.normShouldJumpDist = Math.floor(Math.random() * 2)
+      ? mother.normShouldJumpDist
+      : father.normShouldJumpDist;
+    daughter.medShouldJumpDist = Math.floor(Math.random() * 2)
+      ? mother.medShouldJumpDist
+      : father.medShouldJumpDist;
+    daughter.fastShouldJumpDist = Math.floor(Math.random() * 2)
+      ? mother.fastShouldJumpDist
+      : father.fastShouldJumpDist;
+
+    return [son, daughter];
   }
   protected fitness(entity: Entity): number | Promise<number> {
     return (
@@ -120,7 +161,11 @@ class CustomGenetic extends Genetic<Entity, UserData> {
     );
   }
   protected shouldContinue(state: GeneticState<Entity>): boolean {
-    return true;
+    return (
+      Math.ceil(state.population[0].entity.runner.distanceRan) *
+        DIST_COEFFICIENT <
+      HIGH_SCORE
+    );
   }
 
   public optimize = (fitnessA: number, fitnessB: number) => {
@@ -144,7 +189,7 @@ class CustomGenetic extends Genetic<Entity, UserData> {
     isFinished: boolean;
   }) {
     if (isFinished) {
-      console.log(pop[0]);
+      console.log(pop);
       console.log(
         `Solution is ${pop[0].entity} (expected ${this.userData.solution})`
       );
@@ -153,14 +198,14 @@ class CustomGenetic extends Genetic<Entity, UserData> {
 }
 
 const userData: UserData = {
-  solution: 1000,
+  solution: 10000,
 };
 
 const config: Partial<Configuration> = {
   crossover: 0.75,
   iterations: 2000,
   mutation: 0.3,
-  size: 2,
+  size: 20,
 };
 
 const ShouldJump = (shouldJumpDists: ShouldJumpDists, inputs: JumpInputs) => {
