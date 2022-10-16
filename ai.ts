@@ -194,7 +194,15 @@ class CustomGenetic extends Genetic<Entity, UserData> {
 
     runner.restart();
 
-    console.log(Math.ceil(entity.runner.distanceRan) * DIST_COEFFICIENT);
+    console.log(
+      `Distance Ran: ${
+        Math.ceil(entity.runner.distanceRan) * DIST_COEFFICIENT
+      } with stats ${new Array(
+        entity.normShouldJumpDist,
+        entity.medShouldJumpDist,
+        entity.fastShouldJumpDist
+      )}`
+    );
 
     return (
       (Math.ceil(entity.runner.distanceRan) * DIST_COEFFICIENT) / HIGH_SCORE
@@ -231,9 +239,9 @@ class CustomGenetic extends Genetic<Entity, UserData> {
 
     if (isFinished) {
       console.log(pop);
-      console.log(
-        `Solution is ${pop[0].entity} (expected ${this.userData.solution})`
-      );
+      // console.log(
+      //   `Solution is ${pop[0].entity} (expected ${this.userData.solution})`
+      // );
     }
   }
 }
@@ -244,7 +252,7 @@ const userData: UserData = {
 
 const config: Partial<Configuration> = {
   crossover: 0.75,
-  iterations: 20,
+  iterations: 5,
   mutation: 0.3,
   size: 3,
 };
@@ -305,7 +313,14 @@ const getObstacles: (runner: IRunner) => JumpInputs = (runner) => {
   };
 };
 
-const runAI = () => {
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+const runAI = async () => {
+  document.body.classList.add("offline");
+  new Runner(".interstitial-wrapper");
+
+  await sleep(25);
+
   const genetic = new CustomGenetic(config, userData);
   genetic.evolve();
 };
