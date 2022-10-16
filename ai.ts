@@ -10,20 +10,12 @@ import {
 import { Population } from "./genetic-js/Selection";
 
 type Entity = {
-  normShouldJumpDist: number;
-  medShouldJumpDist: number;
-  fastShouldJumpDist: number;
+  jumpDists: number[];
   runner: IRunner;
 };
 
 type UserData = {
   solution: number;
-};
-
-type ShouldJumpDists = {
-  normShouldJumpDist: number;
-  medShouldJumpDist: number;
-  fastShouldJumpDist: number;
 };
 
 type JumpInputs = {
@@ -64,64 +56,33 @@ class CustomGenetic extends Genetic<Entity, UserData> {
     const wRunner: IRunner = window.Runner;
     var runner = wRunner.instance_;
 
-    const shouldJumpDists: ShouldJumpDists = {
-      normShouldJumpDist:
-        normalJumpDis[Math.floor(Math.random() * normalJumpDis.length)],
-      medShouldJumpDist:
-        mediumJumpDis[Math.floor(Math.random() * normalJumpDis.length)],
-      fastShouldJumpDist:
-        fastJumpDis[Math.floor(Math.random() * normalJumpDis.length)],
-    };
-    console.log(shouldJumpDists);
+    const shouldJumpDists = [
+      normalJumpDis[Math.floor(Math.random() * normalJumpDis.length)], // starting speed (50% of max)
+      mediumJumpDis[Math.floor(Math.random() * normalJumpDis.length)], // medium speed (75% of max)
+      fastJumpDis[Math.floor(Math.random() * normalJumpDis.length)], // fast speed (90% of max)
+    ];
 
-    // runner.startGame();
-    // runner.playIntro();
-    // runner.tRex.startJump(runner.currentSpeed);
-
-    // let Run = async () => {
-    //   return await new Promise((res) => {
-    //     const interval = setInterval(() => {
-    //       if (!runner.playing) {
-    //         res("");
-    //         clearInterval(interval);
-    //       } else if (!runner.tRex.jumping) {
-    //         var inputs = getObstacles(runner);
-
-    //         var shouldJump = ShouldJump(shouldJumpDists, inputs);
-    //         if (shouldJump) {
-    //           runner.tRex.startJump(runner.currentSpeed);
-    //         }
-    //       }
-    //     }, 50);
-    //   });
-    // };
-
-    // await Run();
-    // let ourRunner = { ...runner };
-
-    // runner.restart();
-
-    // console.log(Math.ceil(ourRunner.distanceRan) * DIST_COEFFICIENT);
+    console.log(`Generating Random Seed: ${shouldJumpDists}`);
 
     return {
-      ...shouldJumpDists,
+      jumpDists: shouldJumpDists,
       runner: runner,
     };
   }
   protected mutate(entity: Entity): Entity {
     console.log("MUTATE");
-    entity.normShouldJumpDist =
+    entity.jumpDists[0] =
       Math.floor(Math.random() * 3) > 2
         ? normalJumpDis[Math.floor(Math.random() * normalJumpDis.length)]
-        : entity.normShouldJumpDist;
-    entity.medShouldJumpDist =
+        : entity.jumpDists[0];
+    entity.jumpDists[1] =
       Math.floor(Math.random() * 3) > 2
         ? mediumJumpDis[Math.floor(Math.random() * mediumJumpDis.length)]
-        : entity.medShouldJumpDist;
-    entity.fastShouldJumpDist =
+        : entity.jumpDists[1];
+    entity.jumpDists[2] =
       Math.floor(Math.random() * 3) > 2
         ? fastJumpDis[Math.floor(Math.random() * fastJumpDis.length)]
-        : entity.fastShouldJumpDist;
+        : entity.jumpDists[2];
 
     return entity;
   }
@@ -133,25 +94,25 @@ class CustomGenetic extends Genetic<Entity, UserData> {
     son.runner.distanceRan = 0;
     daughter.runner.distanceRan = 0;
 
-    son.normShouldJumpDist = Math.floor(Math.random() * 2)
-      ? mother.normShouldJumpDist
-      : father.normShouldJumpDist;
-    son.medShouldJumpDist = Math.floor(Math.random() * 2)
-      ? mother.medShouldJumpDist
-      : father.medShouldJumpDist;
-    son.fastShouldJumpDist = Math.floor(Math.random() * 2)
-      ? mother.fastShouldJumpDist
-      : father.fastShouldJumpDist;
+    son.jumpDists[0] = Math.floor(Math.random() * 2)
+      ? mother.jumpDists[0]
+      : father.jumpDists[0];
+    son.jumpDists[1] = Math.floor(Math.random() * 2)
+      ? mother.jumpDists[1]
+      : father.jumpDists[1];
+    son.jumpDists[2] = Math.floor(Math.random() * 2)
+      ? mother.jumpDists[2]
+      : father.jumpDists[2];
 
-    daughter.normShouldJumpDist = Math.floor(Math.random() * 2)
-      ? mother.normShouldJumpDist
-      : father.normShouldJumpDist;
-    daughter.medShouldJumpDist = Math.floor(Math.random() * 2)
-      ? mother.medShouldJumpDist
-      : father.medShouldJumpDist;
-    daughter.fastShouldJumpDist = Math.floor(Math.random() * 2)
-      ? mother.fastShouldJumpDist
-      : father.fastShouldJumpDist;
+    daughter.jumpDists[0] = Math.floor(Math.random() * 2)
+      ? mother.jumpDists[0]
+      : father.jumpDists[0];
+    daughter.jumpDists[1] = Math.floor(Math.random() * 2)
+      ? mother.jumpDists[1]
+      : father.jumpDists[1];
+    daughter.jumpDists[2] = Math.floor(Math.random() * 2)
+      ? mother.jumpDists[2]
+      : father.jumpDists[2];
 
     return [son, daughter];
   }
@@ -164,7 +125,7 @@ class CustomGenetic extends Genetic<Entity, UserData> {
 
     let Run = async () => {
       return await new Promise(async (res) => {
-        console.log(`Starting Fitness for ${entity.normShouldJumpDist}`);
+        console.log(`Starting Fitness for ${entity.jumpDists[0]}`);
 
         const interval = setInterval(() => {
           if (!runner.playing) {
@@ -173,14 +134,7 @@ class CustomGenetic extends Genetic<Entity, UserData> {
           } else if (!runner.tRex.jumping) {
             var inputs = getObstacles(runner);
 
-            var shouldJump = ShouldJump(
-              {
-                normShouldJumpDist: entity.normShouldJumpDist,
-                medShouldJumpDist: entity.medShouldJumpDist,
-                fastShouldJumpDist: entity.fastShouldJumpDist,
-              },
-              inputs
-            );
+            var shouldJump = ShouldJump(entity.jumpDists, inputs);
             if (shouldJump) {
               runner.tRex.startJump(runner.currentSpeed);
             }
@@ -199,9 +153,9 @@ class CustomGenetic extends Genetic<Entity, UserData> {
       `Distance Ran: ${
         Math.ceil(entity.runner.distanceRan) * DIST_COEFFICIENT
       } with stats ${new Array(
-        entity.normShouldJumpDist,
-        entity.medShouldJumpDist,
-        entity.fastShouldJumpDist
+        entity.jumpDists[0],
+        entity.jumpDists[1],
+        entity.jumpDists[2]
       )}`
     );
 
@@ -262,19 +216,19 @@ const config: Partial<Configuration> = {
   size: 3,
 };
 
-const ShouldJump = (shouldJumpDists: ShouldJumpDists, inputs: JumpInputs) => {
+const ShouldJump = (jumpDists: number[], inputs: JumpInputs) => {
   if (inputs.altitude) return false;
 
   if (inputs.speed > inputs.maxSpeed * 0.9) {
-    if (inputs.distance <= shouldJumpDists.fastShouldJumpDist) {
+    if (inputs.distance <= jumpDists[2]) {
       return true;
     }
   } else if (inputs.speed > inputs.maxSpeed * 0.75) {
-    if (inputs.distance <= shouldJumpDists.medShouldJumpDist) {
+    if (inputs.distance <= jumpDists[1]) {
       return true;
     }
   } else {
-    if (inputs.distance <= shouldJumpDists.normShouldJumpDist) {
+    if (inputs.distance <= jumpDists[0]) {
       return true;
     }
   }
