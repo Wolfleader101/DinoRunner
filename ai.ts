@@ -137,7 +137,7 @@ class CustomGenetic extends Genetic<Entity, UserData> {
 
     let Run = async () => {
       return await new Promise(async (res) => {
-        console.log(`Starting Fitness for ${entity.jumpDists[0]}`);
+        console.log(`Starting Fitness for ${entity.jumpDists}`);
 
         const interval = setInterval(() => {
           if (!runner.playing) {
@@ -223,9 +223,9 @@ const userData: UserData = {
 
 const config: Partial<Configuration> = {
   crossover: 0.75,
-  iterations: 2,
+  iterations: 1000,
   mutation: 0.5,
-  size: 4,
+  size: 50,
 };
 
 const ShouldJump = (jumpDists: number[], inputs: JumpInputs) => {
