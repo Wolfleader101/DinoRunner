@@ -131,22 +131,23 @@ class CustomGenetic extends Genetic<Entity, UserData> {
   protected async fitness(entity: Entity): Promise<number> {
     const wRunner: IRunner = window.Runner;
     var runner = wRunner.instance_;
-    runner.startGame();
-    runner.playIntro();
-    runner.tRex.startJump(runner.currentSpeed);
 
     let Run = async () => {
+      runner.startGame();
+      runner.playIntro();
+      runner.tRex.startJump(runner.currentSpeed);
+
       return await new Promise(async (res) => {
         console.log(`Starting Fitness for ${entity.jumpDists}`);
 
-        const interval = setInterval(() => {
+        const interval = setInterval(async () => {
           if (!runner.playing) {
             res("");
             clearInterval(interval);
           } else if (!runner.tRex.jumping) {
             var inputs = getObstacles(runner);
 
-            var shouldJump = ShouldJump(entity.jumpDists, inputs);
+            const shouldJump = await ShouldJump(entity.jumpDists, inputs);
             if (shouldJump) {
               runner.tRex.startJump(runner.currentSpeed);
             }
@@ -225,27 +226,29 @@ const config: Partial<Configuration> = {
   crossover: 0.75,
   iterations: 1000,
   mutation: 0.5,
-  size: 50,
+  size: 100,
 };
 
-const ShouldJump = (jumpDists: number[], inputs: JumpInputs) => {
-  if (inputs.altitude) return false;
+const ShouldJump = async (jumpDists: number[], inputs: JumpInputs) => {
+  return new Promise<boolean>((res) => {
+    if (inputs.altitude) res(false);
 
-  if (inputs.speed > inputs.maxSpeed * 0.9) {
-    if (inputs.distance <= jumpDists[2]) {
-      return true;
+    if (inputs.speed > inputs.maxSpeed * 0.9) {
+      if (inputs.distance <= jumpDists[2]) {
+        res(true);
+      }
+    } else if (inputs.speed > inputs.maxSpeed * 0.75) {
+      if (inputs.distance <= jumpDists[1]) {
+        res(true);
+      }
+    } else {
+      if (inputs.distance <= jumpDists[0]) {
+        res(true);
+      }
     }
-  } else if (inputs.speed > inputs.maxSpeed * 0.75) {
-    if (inputs.distance <= jumpDists[1]) {
-      return true;
-    }
-  } else {
-    if (inputs.distance <= jumpDists[0]) {
-      return true;
-    }
-  }
 
-  return false;
+    res(false);
+  });
 };
 
 const getObstacles: (runner: IRunner) => JumpInputs = (runner) => {
