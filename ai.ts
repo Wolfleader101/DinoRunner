@@ -83,32 +83,55 @@ class CustomGenetic extends Genetic<Entity, UserData> {
     return entity;
   }
   protected crossover(mother: Entity, father: Entity): [Entity, Entity] {
-    console.log("CROSSOVER");
-    let son = mother;
-    let daughter = father;
+    let son = { ...father };
+    let daughter = { ...mother };
 
     son.runner.distanceRan = 0;
     daughter.runner.distanceRan = 0;
 
-    son.jumpDists[0] = Math.floor(Math.random() * 2)
-      ? mother.jumpDists[0]
-      : father.jumpDists[0];
-    son.jumpDists[1] = Math.floor(Math.random() * 2)
-      ? mother.jumpDists[1]
-      : father.jumpDists[1];
-    son.jumpDists[2] = Math.floor(Math.random() * 2)
-      ? mother.jumpDists[2]
-      : father.jumpDists[2];
+    let A = randRange(0, 2);
+    let B = randRange(0, 2);
 
-    daughter.jumpDists[0] = Math.floor(Math.random() * 2)
-      ? mother.jumpDists[0]
-      : father.jumpDists[0];
-    daughter.jumpDists[1] = Math.floor(Math.random() * 2)
-      ? mother.jumpDists[1]
-      : father.jumpDists[1];
-    daughter.jumpDists[2] = Math.floor(Math.random() * 2)
-      ? mother.jumpDists[2]
-      : father.jumpDists[2];
+    if (A == B) {
+      if (A == 0) A++;
+      else A--;
+    }
+
+    if (A > B) {
+      let tmp = B;
+      B = A;
+      A = tmp;
+    }
+
+    for (let i = 0; i < 3; ++i) {
+      if (i < A || i > B) son.jumpDists[i] = father.jumpDists[i];
+      else son.jumpDists[i] = mother.jumpDists[i];
+    }
+
+    for (let i = 0; i < 3; ++i) {
+      if (i < A || i > B) daughter.jumpDists[i] = mother.jumpDists[i];
+      else daughter.jumpDists[i] = father.jumpDists[i];
+    }
+
+    // let sonJump = new Array()
+    //   .concat(father.jumpDists.slice(0, A))
+    //   .concat(mother.jumpDists.splice(A, B - A))
+    //   .concat(father[B]);
+
+    // let daughterJump = mother.jumpDists
+    //   .slice(0, A)
+    //   .concat(father.jumpDists.splice(A, B - A))
+    //   .concat(mother[B]);
+
+    console.log("*********************");
+    console.log("Cross over:");
+
+    console.log(`Father Stats: ${father.jumpDists}`);
+    console.log(`Mother Stats: ${mother.jumpDists}`);
+    console.log("=====");
+    console.log(`Son Stats: ${son.jumpDists}`);
+    console.log(`Daughter Stats: ${daughter.jumpDists}`);
+    console.log("*********************");
 
     return [son, daughter];
   }
