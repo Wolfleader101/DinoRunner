@@ -35,6 +35,12 @@ declare global {
 
 const HIGH_SCORE = 10000;
 const DIST_COEFFICIENT = 0.025;
+const N_MIN = 20,
+  N_MAX = 175;
+const M_MIN = 50,
+  M_MAX = 225;
+const F_MIN = 75,
+  F_MAX = 300;
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -47,9 +53,9 @@ class CustomGenetic extends Genetic<Entity, UserData> {
     var runner = wRunner.instance_;
 
     const shouldJumpDists = [
-      randRange(30, 175), // starting speed (50% of max)
-      randRange(75, 225), // medium speed (75% of max)
-      randRange(75, 300), // fast speed (90% of max)
+      randRange(N_MIN, N_MAX), // starting speed (50% of max)
+      randRange(M_MIN, M_MAX), // medium speed (75% of max)
+      randRange(F_MIN, F_MAX), // fast speed (90% of max)
     ];
 
     console.log(`Generating Random Seed: ${shouldJumpDists}`);
@@ -63,15 +69,15 @@ class CustomGenetic extends Genetic<Entity, UserData> {
     console.log("MUTATE");
     entity.jumpDists[0] =
       Math.floor(Math.random() * 3) > 2
-        ? normalJumpDis[Math.floor(Math.random() * normalJumpDis.length)]
+        ? randRange(N_MIN, N_MAX)
         : entity.jumpDists[0];
     entity.jumpDists[1] =
       Math.floor(Math.random() * 3) > 2
-        ? mediumJumpDis[Math.floor(Math.random() * mediumJumpDis.length)]
+        ? randRange(M_MIN, M_MAX)
         : entity.jumpDists[1];
     entity.jumpDists[2] =
       Math.floor(Math.random() * 3) > 2
-        ? fastJumpDis[Math.floor(Math.random() * fastJumpDis.length)]
+        ? randRange(F_MIN, F_MAX)
         : entity.jumpDists[2];
 
     return entity;
