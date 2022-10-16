@@ -51,15 +51,19 @@ const fastJumpDis = [
 ];
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+const randRange = (min: number, max: number) =>
+  Math.floor(Math.random() * (max - min + 1)) + min;
+
 class CustomGenetic extends Genetic<Entity, UserData> {
   protected async seed(): Promise<Entity> {
     const wRunner: IRunner = window.Runner;
     var runner = wRunner.instance_;
 
     const shouldJumpDists = [
-      normalJumpDis[Math.floor(Math.random() * normalJumpDis.length)], // starting speed (50% of max)
-      mediumJumpDis[Math.floor(Math.random() * normalJumpDis.length)], // medium speed (75% of max)
-      fastJumpDis[Math.floor(Math.random() * normalJumpDis.length)], // fast speed (90% of max)
+      randRange(30, 175), // starting speed (50% of max)
+      randRange(75, 225), // medium speed (75% of max)
+      randRange(75, 300), // fast speed (90% of max)
     ];
 
     console.log(`Generating Random Seed: ${shouldJumpDists}`);
@@ -276,7 +280,8 @@ const runAI = async () => {
   document.body.classList.add("offline");
   new Runner(".interstitial-wrapper");
 
-  await sleep(25);
+  // so we dont get any errors
+  await sleep(250);
 
   const genetic = new CustomGenetic(config, userData);
   genetic.evolve();
