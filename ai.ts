@@ -219,33 +219,6 @@ const getObstacles: (runner: IRunner) => JumpInputs = (runner) => {
 };
 
 const runAI = () => {
-  //   const wRunner = window.Runner;
-  //   var runner = wRunner.instance_;
-
-  //   var init: null | boolean = null;
-
-  //   setInterval(function () {
-  //     if (runner && init === null) {
-  //       runner.startGame();
-  //       runner.playIntro();
-  //       init = false;
-  //     } else if (init === false && runner.playingIntro === false) {
-  //       runner.tRex.startJump(runner.currentSpeed);
-  //       init = true;
-  //     } else if (init && !runner.playing) {
-  //       runner.restart();
-  //     } else if (init) {
-  //       if (!runner.tRex.jumping) {
-  //         var inputs = getObstacles(runner);
-
-  //         var shouldJump = ShouldJump(inputs);
-  //         if (shouldJump) {
-  //           runner.tRex.startJump(runner.currentSpeed);
-  //         }
-  //       }
-  //     }
-  //   }, 50);
-
   const genetic = new CustomGenetic(config, userData);
   genetic.evolve();
 };
