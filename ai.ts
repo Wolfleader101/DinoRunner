@@ -142,7 +142,7 @@ class CustomGenetic extends Genetic<Entity, UserData> {
       } else if (!runner.tRex.jumping) {
         var inputs = getObstacles(runner);
 
-        const shouldJump = await ShouldJump(entity.jumpDists, inputs);
+        const shouldJump = ShouldJump(entity.jumpDists, inputs);
         if (shouldJump) {
           runner.tRex.startJump(runner.currentSpeed);
         }
@@ -222,26 +222,24 @@ const config: Partial<Configuration> = {
   size: 100,
 };
 
-const ShouldJump = async (jumpDists: number[], inputs: JumpInputs) => {
-  return new Promise<boolean>((res) => {
-    if (inputs.altitude) res(false);
+const ShouldJump = (jumpDists: number[], inputs: JumpInputs) => {
+  if (inputs.altitude) return false;
 
-    if (inputs.speed > inputs.maxSpeed * 0.9) {
-      if (inputs.distance <= jumpDists[2]) {
-        res(true);
-      }
-    } else if (inputs.speed > inputs.maxSpeed * 0.75) {
-      if (inputs.distance <= jumpDists[1]) {
-        res(true);
-      }
-    } else {
-      if (inputs.distance <= jumpDists[0]) {
-        res(true);
-      }
+  if (inputs.speed > inputs.maxSpeed * 0.9) {
+    if (inputs.distance <= jumpDists[2]) {
+      return true;
     }
+  } else if (inputs.speed > inputs.maxSpeed * 0.75) {
+    if (inputs.distance <= jumpDists[1]) {
+      return true;
+    }
+  } else {
+    if (inputs.distance <= jumpDists[0]) {
+      return true;
+    }
+  }
 
-    res(false);
-  });
+  return false;
 };
 
 const getObstacles: (runner: IRunner) => JumpInputs = (runner) => {
