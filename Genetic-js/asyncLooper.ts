@@ -5,25 +5,27 @@ export async function asyncLooper(
   let currIteration = 0;
   let didBreak = false;
   const breakFn = () => (didBreak = true);
-  const wrapper = (): Promise<any> => {
+  const wrapper = async (): Promise<any> => {
     try {
-      return Promise.resolve(doStuff(currIteration, breakFn)).then(() => {
-        try {
-          const willContinue = !didBreak && shouldContinue(currIteration);
-          if (willContinue) {
-            currIteration++;
-            return Promise.resolve(wrapper());
-          }
-        } catch (error) {
-          return Promise.reject(error);
+      let doStuffRun = await doStuff(currIteration, breakFn);
+
+      // return Promise.resolve(await doStuff(currIteration, breakFn)).then(() => {
+      try {
+        const willContinue = !didBreak && shouldContinue(currIteration);
+        if (willContinue) {
+          currIteration++;
+          return await wrapper();
         }
-      });
+      } catch (error) {
+        return Promise.reject(error);
+      }
+      // });
     } catch (error) {
       return Promise.reject(error);
     }
   };
   try {
-    return Promise.resolve(wrapper());
+    return await wrapper();
   } catch (error) {
     return Promise.reject(error);
   }

@@ -99,114 +99,220 @@ export abstract class Genetic<Entity, UserData> {
       this.entities.push(clone(await this.seed()));
     }
 
-    return await asyncLooper(
-      (currIteration) => {
-        return currIteration < this.configuration.iterations;
-      },
-      // tslint:disable-next-line:max-func-body-length
-      async (currIteration, breakFn) => {
-        try {
-          // reset for each generation
-          this.internalGenState = {
-            rlr: 0,
-            seq: 0,
-          };
+    let currIteration = 0;
+    while (currIteration < this.configuration.iterations) {
+      try {
+        // reset for each generation
+        this.internalGenState = {
+          rlr: 0,
+          seq: 0,
+        };
 
-          // score and sort
-          const pop = await Promise.all(
-            this.entities.map(async (entity) => {
-              const fitness = await this.fitness(entity);
-              return { fitness, entity: entity };
-            })
-          ).then((unsortedPopulation) => {
-            return unsortedPopulation.sort((entityA, entityB) => {
-              return this.optimize(entityA.fitness, entityB.fitness) ? -1 : 1;
-            });
-          });
+        // score and sort
+        let pop: { fitness: number; entity: Entity }[] = [];
 
-          // generation notification
-          const mean =
-            pop.reduce((currMean, popItem) => {
-              return currMean + popItem.fitness;
-            }, 0) / pop.length;
-          const stdev = Math.sqrt(
-            pop
-              .map((popItem) => {
-                return (popItem.fitness - mean) * (popItem.fitness - mean);
-              })
-              .reduce((currStdev, popItem) => {
-                return currStdev + popItem;
-              }, 0) / pop.length
-          );
-
-          const stats = {
-            maximum: pop[0].fitness,
-            mean: mean,
-            minimum: pop[pop.length - 1].fitness,
-            stdev: stdev,
-          };
-
-          const shouldContinue = this.shouldContinue
-            ? this.shouldContinue({
-                generation: currIteration,
-                population: pop,
-                stats,
-              })
-            : true;
-          const isFinished =
-            !shouldContinue ||
-            currIteration === this.configuration.iterations - 1;
-
-          const shouldSendNotification: boolean =
-            this.notification &&
-            (isFinished ||
-              this.configuration.skip === 0 ||
-              currIteration % this.configuration.skip === 0);
-          if (shouldSendNotification) {
-            this.sendNotification({
-              generation: currIteration,
-              isFinished,
-              population: pop.slice(0, this.configuration.maxResults),
-              stats,
-            });
-          }
-
-          if (isFinished) {
-            breakFn();
-            return;
-          }
-
-          // crossover and mutate
-          const newPop = [];
-
-          if (this.configuration.fittestAlwaysSurvives) {
-            // lets the best solution fall through
-            newPop.push(pop[0].entity);
-          }
-
-          while (newPop.length < this.configuration.size) {
-            if (
-              this.crossover && // if there is a crossover function
-              Math.random() <= this.configuration.crossover && // base crossover on specified probability
-              newPop.length + 1 < this.configuration.size // keeps us from going 1 over the max population size
-            ) {
-              const parents = this.select2(pop);
-              const children = this.crossover(
-                clone(parents[0]),
-                clone(parents[1])
-              ).map(this.mutateOrNot);
-              newPop.push(children[0], children[1]);
-            } else {
-              newPop.push(this.mutateOrNot(this.select1(pop)));
-            }
-          }
-          this.entities = newPop;
-        } catch (error) {
-          console.error(error);
-          return Promise.reject(error);
+        for (let ent of this.entities) {
+          const fitness = await this.fitness(ent);
+          pop.push({ fitness, entity: ent });
         }
+
+        pop.map((unsortedPopulation) => {
+          return unsortedPopulation.sort((entityA, entityB) => {
+            return this.optimize(entityA.fitness, entityB.fitness) ? -1 : 1;
+          });
+        });
+
+        // generation notification
+        const mean =
+          pop.reduce((currMean, popItem) => {
+            return currMean + popItem.fitness;
+          }, 0) / pop.length;
+        const stdev = Math.sqrt(
+          pop
+            .map((popItem) => {
+              return (popItem.fitness - mean) * (popItem.fitness - mean);
+            })
+            .reduce((currStdev, popItem) => {
+              return currStdev + popItem;
+            }, 0) / pop.length
+        );
+
+        const stats = {
+          maximum: pop[0].fitness,
+          mean: mean,
+          minimum: pop[pop.length - 1].fitness,
+          stdev: stdev,
+        };
+
+        const shouldContinue = this.shouldContinue
+          ? this.shouldContinue({
+              generation: currIteration,
+              population: pop,
+              stats,
+            })
+          : true;
+        const isFinished =
+          !shouldContinue ||
+          currIteration === this.configuration.iterations - 1;
+
+        const shouldSendNotification: boolean =
+          isFinished ||
+          this.configuration.skip === 0 ||
+          currIteration % this.configuration.skip === 0;
+        if (shouldSendNotification) {
+          this.sendNotification({
+            generation: currIteration,
+            isFinished,
+            population: pop.slice(0, this.configuration.maxResults),
+            stats,
+          });
+        }
+
+        if (isFinished) {
+          break;
+        }
+
+        // crossover and mutate
+        const newPop: Entity[] = [];
+
+        if (this.configuration.fittestAlwaysSurvives) {
+          // lets the best solution fall through
+          newPop.push(pop[0].entity);
+        }
+
+        while (newPop.length < this.configuration.size) {
+          if (
+            this.crossover && // if there is a crossover function
+            Math.random() <= this.configuration.crossover && // base crossover on specified probability
+            newPop.length + 1 < this.configuration.size // keeps us from going 1 over the max population size
+          ) {
+            const parents = this.select2(pop);
+            const children = this.crossover(
+              clone(parents[0]),
+              clone(parents[1])
+            ).map(this.mutateOrNot);
+            newPop.push(children[0], children[1]);
+          } else {
+            newPop.push(this.mutateOrNot(this.select1(pop)));
+          }
+        }
+        this.entities = newPop;
+      } catch (error) {
+        console.error(error);
+        return Promise.reject(error);
       }
-    );
+    }
+
+    // return await asyncLooper(
+    //   (currIteration) => {
+    //     return currIteration < this.configuration.iterations;
+    //   },
+    //   // tslint:disable-next-line:max-func-body-length
+    //   async (currIteration, breakFn) => {
+    //     try {
+    //       // reset for each generation
+    //       this.internalGenState = {
+    //         rlr: 0,
+    //         seq: 0,
+    //       };
+
+    //       // score and sort
+    //       let pop: { fitness: number; entity: Entity }[] = [];
+
+    //       for (let ent of this.entities) {
+    //         const fitness = await this.fitness(ent);
+    //         pop.push({ fitness, entity: ent });
+    //       }
+
+    //       pop.map((unsortedPopulation) => {
+    //         return unsortedPopulation.sort((entityA, entityB) => {
+    //           return this.optimize(entityA.fitness, entityB.fitness) ? -1 : 1;
+    //         });
+    //       });
+
+    //       // generation notification
+    //       const mean =
+    //         pop.reduce((currMean, popItem) => {
+    //           return currMean + popItem.fitness;
+    //         }, 0) / pop.length;
+    //       const stdev = Math.sqrt(
+    //         pop
+    //           .map((popItem) => {
+    //             return (popItem.fitness - mean) * (popItem.fitness - mean);
+    //           })
+    //           .reduce((currStdev, popItem) => {
+    //             return currStdev + popItem;
+    //           }, 0) / pop.length
+    //       );
+
+    //       const stats = {
+    //         maximum: pop[0].fitness,
+    //         mean: mean,
+    //         minimum: pop[pop.length - 1].fitness,
+    //         stdev: stdev,
+    //       };
+
+    //       const shouldContinue = this.shouldContinue
+    //         ? this.shouldContinue({
+    //             generation: currIteration,
+    //             population: pop,
+    //             stats,
+    //           })
+    //         : true;
+    //       const isFinished =
+    //         !shouldContinue ||
+    //         currIteration === this.configuration.iterations - 1;
+
+    //       const shouldSendNotification: boolean =
+    //         this.notification &&
+    //         (isFinished ||
+    //           this.configuration.skip === 0 ||
+    //           currIteration % this.configuration.skip === 0);
+    //       if (shouldSendNotification) {
+    //         this.sendNotification({
+    //           generation: currIteration,
+    //           isFinished,
+    //           population: pop.slice(0, this.configuration.maxResults),
+    //           stats,
+    //         });
+    //       }
+
+    //       if (isFinished) {
+    //         breakFn();
+    //         return;
+    //       }
+
+    //       // crossover and mutate
+    //       const newPop = [];
+
+    //       if (this.configuration.fittestAlwaysSurvives) {
+    //         // lets the best solution fall through
+    //         newPop.push(pop[0].entity);
+    //       }
+
+    //       while (newPop.length < this.configuration.size) {
+    //         if (
+    //           this.crossover && // if there is a crossover function
+    //           Math.random() <= this.configuration.crossover && // base crossover on specified probability
+    //           newPop.length + 1 < this.configuration.size // keeps us from going 1 over the max population size
+    //         ) {
+    //           const parents = this.select2(pop);
+    //           const children = this.crossover(
+    //             clone(parents[0]),
+    //             clone(parents[1])
+    //           ).map(this.mutateOrNot);
+    //           newPop.push(children[0], children[1]);
+    //         } else {
+    //           newPop.push(this.mutateOrNot(this.select1(pop)));
+    //         }
+    //       }
+    //       this.entities = newPop;
+    //     } catch (error) {
+    //       console.error(error);
+    //       return Promise.reject(error);
+    //     }
+    //   }
+    // );
   }
 
   private sendNotification({

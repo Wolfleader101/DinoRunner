@@ -36,7 +36,7 @@ declare global {
 const HIGH_SCORE = 10000;
 const DIST_COEFFICIENT = 0.025;
 const N_MIN = 20,
-  N_MAX = 175;
+  N_MAX = 150;
 const M_MIN = 50,
   M_MAX = 225;
 const F_MIN = 75,
@@ -132,31 +132,24 @@ class CustomGenetic extends Genetic<Entity, UserData> {
     const wRunner: IRunner = window.Runner;
     var runner = wRunner.instance_;
 
-    let Run = async () => {
-      runner.startGame();
-      runner.playIntro();
-      runner.tRex.startJump(runner.currentSpeed);
+    console.log(`Starting Fitness for ${entity.jumpDists}`);
+    runner.startGame();
+    runner.playIntro();
 
-      return await new Promise(async (res) => {
-        console.log(`Starting Fitness for ${entity.jumpDists}`);
+    while (true) {
+      if (!runner.playing) {
+        break;
+      } else if (!runner.tRex.jumping) {
+        var inputs = getObstacles(runner);
 
-        const interval = setInterval(async () => {
-          if (!runner.playing) {
-            res("");
-            clearInterval(interval);
-          } else if (!runner.tRex.jumping) {
-            var inputs = getObstacles(runner);
+        const shouldJump = await ShouldJump(entity.jumpDists, inputs);
+        if (shouldJump) {
+          runner.tRex.startJump(runner.currentSpeed);
+        }
+      }
 
-            const shouldJump = await ShouldJump(entity.jumpDists, inputs);
-            if (shouldJump) {
-              runner.tRex.startJump(runner.currentSpeed);
-            }
-          }
-        }, 50);
-      });
-    };
-
-    await Run();
+      await sleep(50);
+    }
 
     entity.runner = { ...runner };
 
@@ -295,7 +288,7 @@ const runAI = async () => {
   await sleep(250);
 
   const genetic = new CustomGenetic(config, userData);
-  genetic.evolve();
+  await genetic.evolve();
 };
 
 document.addEventListener("DOMContentLoaded", runAI);
