@@ -116,10 +116,8 @@ export abstract class Genetic<Entity, UserData> {
           pop.push({ fitness, entity: ent });
         }
 
-        pop.map((unsortedPopulation) => {
-          return unsortedPopulation.sort((entityA, entityB) => {
-            return this.optimize(entityA.fitness, entityB.fitness) ? -1 : 1;
-          });
+        pop.sort((entityA, entityB) => {
+          return this.optimize(entityA.fitness, entityB.fitness) ? -1 : 1;
         });
 
         // generation notification
