@@ -11,7 +11,7 @@ import { Population } from "./genetic-js/Selection";
 
 type Entity = {
   jumpDists: number[];
-  runner: IRunner;
+  distanceRan: number;
 };
 
 type UserData = {
@@ -49,9 +49,6 @@ const randRange = (min: number, max: number) =>
 
 class CustomGenetic extends Genetic<Entity, UserData> {
   protected async seed(): Promise<Entity> {
-    const wRunner: IRunner = window.Runner;
-    var runner = wRunner.instance_;
-
     const shouldJumpDists = [
       randRange(N_MIN, N_MAX), // starting speed (50% of max)
       randRange(M_MIN, M_MAX), // medium speed (75% of max)
@@ -62,7 +59,7 @@ class CustomGenetic extends Genetic<Entity, UserData> {
 
     return {
       jumpDists: shouldJumpDists,
-      runner: runner,
+      distanceRan: 0,
     };
   }
   protected mutate(entity: Entity): Entity {
@@ -91,14 +88,14 @@ class CustomGenetic extends Genetic<Entity, UserData> {
     console.log(mother);
     console.log(father);
 
-    console.log(`Father Stats: ${father.jumpDists}`);
     console.log(`Mother Stats: ${mother.jumpDists}`);
+    console.log(`Father Stats: ${father.jumpDists}`);
 
     let son = { ...father };
     let daughter = { ...mother };
 
-    son.runner.distanceRan = 0;
-    daughter.runner.distanceRan = 0;
+    son.distanceRan = 0;
+    daughter.distanceRan = 0;
 
     let A = randRange(0, 3);
     let B = randRange(0, 3);
@@ -154,30 +151,22 @@ class CustomGenetic extends Genetic<Entity, UserData> {
       await sleep(50);
     }
 
-    entity.runner = { ...runner };
+    entity.distanceRan = Math.ceil(runner.distanceRan) * DIST_COEFFICIENT;
 
     runner.restart();
 
     console.log(
-      `Distance Ran: ${
-        Math.ceil(entity.runner.distanceRan) * DIST_COEFFICIENT
-      } with stats ${new Array(
+      `Distance Ran: ${entity.distanceRan} with stats ${new Array(
         entity.jumpDists[0],
         entity.jumpDists[1],
         entity.jumpDists[2]
       )}`
     );
 
-    return (
-      (Math.ceil(entity.runner.distanceRan) * DIST_COEFFICIENT) / HIGH_SCORE
-    );
+    return entity.distanceRan / HIGH_SCORE;
   }
   protected shouldContinue(state: GeneticState<Entity>): boolean {
-    return (
-      Math.ceil(state.population[0].entity.runner.distanceRan) *
-        DIST_COEFFICIENT <
-      HIGH_SCORE
-    );
+    return state.population[0].entity.distanceRan < HIGH_SCORE;
   }
 
   public optimize = (fitnessA: number, fitnessB: number) => {

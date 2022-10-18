@@ -16,5 +16,5 @@
     "noImplicitReturns": true,
     "skipLibCheck": true
   },
-  "include": ["src", "ai.ts"]
+  "include": ["Genetic-js", "chromium", "ai.ts"]
 }

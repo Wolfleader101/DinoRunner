@@ -98,13 +98,20 @@ export abstract class Genetic<Entity, UserData> {
       let pop: { fitness: number; entity: Entity }[] = [];
 
       for (let ent of this.entities) {
+        console.log(ent);
         const fitness = await this.fitness(ent);
         pop.push({ fitness, entity: ent });
       }
 
+      console.log("Before optimising");
+      console.log(pop);
+
       pop.sort((entityA, entityB) => {
         return this.optimize(entityA.fitness, entityB.fitness) ? -1 : 1;
       });
+
+      console.log("optimised pop");
+      console.log(pop);
 
       // generation notification
       const mean =
@@ -168,10 +175,17 @@ export abstract class Genetic<Entity, UserData> {
           Math.random() <= this.configuration.crossover && // base crossover on specified probability
           newPop.length + 1 < this.configuration.size // keeps us from going 1 over the max population size
         ) {
+          console.log(`CROSSOVER1`);
+          console.log(pop);
+
+          const randRange = (min: number, max: number) =>
+            Math.floor(Math.random() * (max - min + 1)) + min;
+
           const parents = [
             pop[0].entity,
-            pop[Math.floor(Math.random() * pop.length) + 1].entity,
+            pop[randRange(1, pop.length - 1)].entity,
           ];
+          console.log(parents);
 
           const children = this.crossover({ ...parents[0] }, { ...parents[1] }); //.map(this.mutateOrNot);
 
