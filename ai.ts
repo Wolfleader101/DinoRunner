@@ -67,6 +67,7 @@ class CustomGenetic extends Genetic<Entity, UserData> {
   }
   protected mutate(entity: Entity): Entity {
     console.log("MUTATE");
+    console.log(`Entity: ${entity.jumpDists} is mutating`);
     entity.jumpDists[0] =
       Math.floor(Math.random() * 3) > 2
         ? randRange(N_MIN, N_MAX)
@@ -80,6 +81,7 @@ class CustomGenetic extends Genetic<Entity, UserData> {
         ? randRange(F_MIN, F_MAX)
         : entity.jumpDists[2];
 
+    console.log(`new JumpDists = ${entity.jumpDists}`);
     return entity;
   }
   protected crossover(mother: Entity, father: Entity): [Entity, Entity] {
@@ -202,7 +204,7 @@ class CustomGenetic extends Genetic<Entity, UserData> {
     console.log(pop);
 
     if (isFinished) {
-      console.log(`Finished with pop: ${pop}`);
+      console.log(`Finished with pop: ${pop.forEach((el) => console.log(el))}`);
       // console.log(
       //   `Solution is ${pop[0].entity} (expected ${this.userData.solution})`
       // );
@@ -219,7 +221,7 @@ const config: Partial<Configuration> = {
   crossover: 0.75,
   iterations: 1000,
   mutation: 0.5,
-  size: 100,
+  size: 4,
 };
 
 const ShouldJump = (jumpDists: number[], inputs: JumpInputs) => {
