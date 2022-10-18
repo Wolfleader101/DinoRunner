@@ -184,9 +184,9 @@ class CustomGenetic extends Genetic<Entity, UserData> {
   };
 
   // more likely allows the most fit individuals to survive between generations
-  public select1 = Select1.Fittest;
+  public select1 = Select1.Tournament2;
   // always mates the most fit individual with random individuals
-  public select2 = Select2.FittestRandom;
+  public select2 = Select2.RandomLinearRank;
 
   public async notification({
     population: pop,
