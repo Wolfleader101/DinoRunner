@@ -48,6 +48,7 @@ class CustomGenetic extends Genetic<Entity, UserData> {
   protected seed(): Entity {
     const randRange = (min: number, max: number) =>
       Math.floor(Math.random() * (max - min + 1)) + min;
+
     const shouldJumpDists = [
       randRange(N_MIN, N_MAX), // starting speed (50% of max)
       randRange(M_MIN, M_MAX), // medium speed (75% of max)
@@ -62,6 +63,9 @@ class CustomGenetic extends Genetic<Entity, UserData> {
     };
   }
   protected mutate(entity: Entity): Entity {
+    const randRange = (min: number, max: number) =>
+      Math.floor(Math.random() * (max - min + 1)) + min;
+
     console.log("MUTATE");
     console.log(`Entity: ${entity.jumpDists} is mutating`);
     entity.jumpDists[0] =
@@ -81,6 +85,9 @@ class CustomGenetic extends Genetic<Entity, UserData> {
     return entity;
   }
   protected crossover(mother: Entity, father: Entity): [Entity, Entity] {
+    const randRange = (min: number, max: number) =>
+      Math.floor(Math.random() * (max - min + 1)) + min;
+
     console.log("*********************");
     console.log("Cross over:");
 
@@ -266,15 +273,17 @@ const getObstacles: (runner: IRunner) => JumpInputs = (runner) => {
   };
 };
 
-const runAI = async () => {
-  document.body.classList.add("offline");
-  new Runner(".interstitial-wrapper");
+function runAI() {
+  void (async function () {
+    document.body.classList.add("offline");
+    new Runner(".interstitial-wrapper");
 
-  // so we dont get any errors
-  await sleep(250);
+    // so we dont get any errors
+    await sleep(250);
 
-  const genetic = new CustomGenetic(config, userData);
-  await genetic.evolve();
-};
+    const genetic = new CustomGenetic(config, userData);
+    await genetic.evolve();
+  })();
+}
 
 document.addEventListener("DOMContentLoaded", runAI);
