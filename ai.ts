@@ -1,4 +1,4 @@
-import { IRunner } from "./chromium/offline.d";
+import { IRunner } from "./chromium/offline";
 import {
   Genetic,
   GeneticState,
@@ -42,7 +42,7 @@ const M_MIN = 50,
 const F_MIN = 75,
   F_MAX = 300;
 
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 const randRange = (min: number, max: number) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
@@ -69,33 +69,39 @@ class CustomGenetic extends Genetic<Entity, UserData> {
     console.log("MUTATE");
     console.log(`Entity: ${entity.jumpDists} is mutating`);
     entity.jumpDists[0] =
-      Math.floor(Math.random() * 3) > 2
+      Math.floor(Math.random() * 5) <= 2
         ? randRange(N_MIN, N_MAX)
         : entity.jumpDists[0];
     entity.jumpDists[1] =
-      Math.floor(Math.random() * 3) > 2
+      Math.floor(Math.random() * 5) <= 2
         ? randRange(M_MIN, M_MAX)
         : entity.jumpDists[1];
     entity.jumpDists[2] =
-      Math.floor(Math.random() * 3) > 2
+      Math.floor(Math.random() * 5) <= 2
         ? randRange(F_MIN, F_MAX)
         : entity.jumpDists[2];
 
-    console.log(`new JumpDists = ${entity.jumpDists}`);
+    console.log(`Mutated Entity: ${entity.jumpDists}`);
     return entity;
   }
   protected crossover(mother: Entity, father: Entity): [Entity, Entity] {
-    console.log("CROSSOVER");
+    console.log("*********************");
+    console.log("Cross over:");
+
     console.log(mother);
     console.log(father);
+
+    console.log(`Father Stats: ${father.jumpDists}`);
+    console.log(`Mother Stats: ${mother.jumpDists}`);
+
     let son = { ...father };
     let daughter = { ...mother };
 
     son.runner.distanceRan = 0;
     daughter.runner.distanceRan = 0;
 
-    let A = randRange(0, 2);
-    let B = randRange(0, 2);
+    let A = randRange(0, 3);
+    let B = randRange(0, 3);
 
     if (A == B) {
       if (A == 0) A++;
@@ -118,11 +124,6 @@ class CustomGenetic extends Genetic<Entity, UserData> {
       else daughter.jumpDists[i] = father.jumpDists[i];
     }
 
-    console.log("*********************");
-    console.log("Cross over:");
-
-    console.log(`Father Stats: ${father.jumpDists}`);
-    console.log(`Mother Stats: ${mother.jumpDists}`);
     console.log("=====");
     console.log(`Son Stats: ${son.jumpDists}`);
     console.log(`Daughter Stats: ${daughter.jumpDists}`);
@@ -184,7 +185,7 @@ class CustomGenetic extends Genetic<Entity, UserData> {
   };
 
   // more likely allows the most fit individuals to survive between generations
-  public select1 = Select1.Tournament2;
+  public select1 = Select1.Random;
   // always mates the most fit individual with random individuals
   public select2 = Select2.RandomLinearRank;
 
@@ -222,6 +223,7 @@ const config: Partial<Configuration> = {
   iterations: 1000,
   mutation: 0.5,
   size: 4,
+  fittestAlwaysSurvives: true,
 };
 
 const ShouldJump = (jumpDists: number[], inputs: JumpInputs) => {
