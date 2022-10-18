@@ -101,6 +101,8 @@ export abstract class Genetic<Entity, UserData> {
 
       for (let ent of this.entities) {
         const fitness = await this.fitness(ent);
+        console.log(ent);
+        console.log("*****");
         pop.push({ fitness, entity: { ...ent } });
       }
 
