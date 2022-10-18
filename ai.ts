@@ -44,11 +44,10 @@ const F_MIN = 75,
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-const randRange = (min: number, max: number) =>
-  Math.floor(Math.random() * (max - min + 1)) + min;
-
 class CustomGenetic extends Genetic<Entity, UserData> {
-  protected async seed(): Promise<Entity> {
+  protected seed(): Entity {
+    const randRange = (min: number, max: number) =>
+      Math.floor(Math.random() * (max - min + 1)) + min;
     const shouldJumpDists = [
       randRange(N_MIN, N_MAX), // starting speed (50% of max)
       randRange(M_MIN, M_MAX), // medium speed (75% of max)
@@ -58,7 +57,7 @@ class CustomGenetic extends Genetic<Entity, UserData> {
     console.log(`Generating Random Seed: ${shouldJumpDists}`);
 
     return {
-      jumpDists: shouldJumpDists,
+      jumpDists: [...shouldJumpDists],
       distanceRan: 0,
     };
   }
@@ -156,11 +155,7 @@ class CustomGenetic extends Genetic<Entity, UserData> {
     runner.restart();
 
     console.log(
-      `Distance Ran: ${entity.distanceRan} with stats ${new Array(
-        entity.jumpDists[0],
-        entity.jumpDists[1],
-        entity.jumpDists[2]
-      )}`
+      `Distance Ran: ${entity.distanceRan} with stats ${entity.jumpDists}`
     );
 
     return entity.distanceRan / HIGH_SCORE;

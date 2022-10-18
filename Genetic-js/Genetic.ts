@@ -61,7 +61,7 @@ export abstract class Genetic<Entity, UserData> {
   };
 
   public abstract optimize: Optimize.OptimizeFun;
-  protected abstract seed(): Promise<Entity>;
+  protected abstract seed(): Entity;
   protected abstract mutate(entity: Entity): Entity;
   protected abstract crossover(
     mother: Entity,
@@ -83,7 +83,9 @@ export abstract class Genetic<Entity, UserData> {
   public async evolve(): Promise<void> {
     // seed the population
     for (let currSeed = 0; currSeed < this.configuration.size; ++currSeed) {
-      this.entities.push({ ...(await this.seed()) });
+      let ent = this.seed();
+
+      this.entities.push(ent);
     }
 
     let currIteration = 0;
@@ -98,9 +100,10 @@ export abstract class Genetic<Entity, UserData> {
       let pop: { fitness: number; entity: Entity }[] = [];
 
       for (let ent of this.entities) {
-        console.log(ent);
         const fitness = await this.fitness(ent);
-        pop.push({ fitness, entity: ent });
+        console.log(ent);
+        console.log("*****");
+        pop.push({ fitness, entity: { ...ent } });
       }
 
       console.log("Before optimising");
