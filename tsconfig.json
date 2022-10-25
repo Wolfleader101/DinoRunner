@@ -5,7 +5,7 @@
     "module": "ESNext",
     "lib": ["ESNext", "DOM"],
     "moduleResolution": "Node",
-    "strict": true,
+    "strict": false,
     "sourceMap": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -16,5 +16,5 @@
     "noImplicitReturns": true,
     "skipLibCheck": true
   },
-  "include": ["Genetic-js", "chromium", "ai.ts"]
+  "include": ["src/Genetic-js", "src/chromium", "src/ai.ts"]
 }

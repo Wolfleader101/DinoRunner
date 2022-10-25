@@ -5,6 +5,7 @@
 
 export const Serialization = {
   parse: (str: string) => {
+    // @ts-ignore
     return JSON.parse(str, (key, value) => {
       if (typeof value !== "string") {
         return value;
@@ -19,6 +20,7 @@ export const Serialization = {
     });
   },
   stringify: (obj: any) => {
+    // @ts-ignore
     return JSON.stringify(obj, (key, value) => {
       if (value instanceof Function || typeof value === "function") {
         return "__func__:" + value.toString();

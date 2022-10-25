@@ -6,8 +6,8 @@ import {
   Select2,
   Stats,
   Configuration,
-} from "./genetic-js";
-import { Population } from "./genetic-js/Selection";
+} from "./Genetic-js";
+import { Population } from "./Genetic-js/Selection";
 
 type Entity = {
   jumpDists: number[];
@@ -276,6 +276,8 @@ const getObstacles: (runner: IRunner) => JumpInputs = (runner) => {
 function runAI() {
   void (async function () {
     document.body.classList.add("offline");
+
+    // @ts-ignore
     new Runner(".interstitial-wrapper");
 
     // so we dont get any errors

@@ -113,9 +113,6 @@ export abstract class Genetic<Entity, UserData> {
         return this.optimize(entityA.fitness, entityB.fitness) ? -1 : 1;
       });
 
-      console.log("optimised pop");
-      console.log(pop);
-
       // generation notification
       const mean =
         pop.reduce((currMean, popItem) => {
