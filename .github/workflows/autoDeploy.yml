@@ -37,5 +37,5 @@ jobs:
       # Runs a single command using the runners shell
       - name: Run deploy
         run: |
-        npm i
-        sh ./deploy.sh
+          npm i
+          sh ./deploy.sh
